@@ -1,0 +1,45 @@
+:root {
+  /* Colors */
+  --bg:         #080810;
+  --surface:    #0f0f1a;
+  --surface2:   #16162a;
+  --surface3:   #1e1e32;
+  --border:     #252538;
+  --border2:    #32324a;
+
+  --accent:     #ff6b35;
+  --accent-dim: rgba(255, 107, 53, 0.15);
+  --accent2:    #7c3aed;
+  --accent3:    #06b6d4;
+  --accent4:    #f59e0b;
+
+  --green:      #22c55e;
+  --green-dim:  rgba(34, 197, 94, 0.12);
+  --red:        #ef4444;
+  --red-dim:    rgba(239, 68, 68, 0.12);
+  --yellow:     #eab308;
+  --yellow-dim: rgba(234, 179, 8, 0.12);
+  --blue:       #3b82f6;
+  --blue-dim:   rgba(59, 130, 246, 0.12);
+
+  --text:       #e2e8f0;
+  --text2:      #94a3b8;
+  --muted:      #475569;
+
+  /* Typography */
+  --font-mono: 'Space Mono', 'Courier New', monospace;
+  --font-display: 'Syne', sans-serif;
+
+  /* Sizing */
+  --topbar-h:  56px;
+  --sidebar-w: 230px;
+  --preview-h: 160px;
+  --radius:    6px;
+  --radius-lg: 10px;
+
+  /* Shadows & Glows */
+  --glow-accent: 0 0 24px rgba(255, 107, 53, 0.35);
+  --glow-green:  0 0 16px rgba(34, 197, 94, 0.3);
+  --glow-red:    0 0 16px rgba(239, 68, 68, 0.3);
+  --shadow:      0 4px 24px rgba(0,0,0,0.4);
+}

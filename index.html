@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EmojiLang IDE 🚀</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/reset.css" />
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/sidebar.css" />
+  <link rel="stylesheet" href="css/editor.css" />
+  <link rel="stylesheet" href="css/output.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="logo">
+        <span class="logo-icon">🌀</span>
+        <span class="logo-text">Emoji<span class="logo-accent">Lang</span></span>
+        <span class="logo-version">v1.0</span>
+      </div>
+      <nav class="tab-bar">
+        <button class="tab active" data-tab="editor">✏️ Editor</button>
+        <button class="tab" data-tab="docs">📖 Docs</button>
+      </nav>
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-ghost" id="btn-clear">🗑️ Clear</button>
+      <button class="btn btn-ghost" id="btn-example">📂 Load Example</button>
+      <button class="btn btn-run" id="btn-run">
+        <span class="run-icon">▶</span>
+        <span class="run-text">Run Code</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN WORKSPACE -->
+  <main class="workspace">
+
+    <!-- LEFT SIDEBAR: Emoji Reference -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <span>🔣</span> Emoji Reference
+      </div>
+      <div class="sidebar-search">
+        <input type="text" id="emoji-search" placeholder="Search emojis..." autocomplete="off" />
+      </div>
+      <div class="emoji-list" id="emoji-list">
+        <!-- Populated by JS -->
+      </div>
+    </aside>
+
+    <!-- CENTER: Code Editor -->
+    <section class="editor-panel">
+      <div class="panel-header">
+        <span class="panel-title">📝 main.emoji</span>
+        <div class="editor-meta">
+          <span id="line-count">0 lines</span>
+          <span class="dot">·</span>
+          <span id="char-count">0 chars</span>
+        </div>
+      </div>
+
+      <div class="editor-wrap">
+        <div class="line-numbers" id="line-numbers">1</div>
+        <textarea
+          id="code-editor"
+          class="code-editor"
+          spellcheck="false"
+          autocomplete="off"
+          autocorrect="off"
+          placeholder="🖊️ Start coding with emojis...&#10;&#10;Try: 📢 &quot;Hello World&quot; 🔚"
+        ></textarea>
+      </div>
+
+      <!-- CONVERTED PYTHON PREVIEW -->
+      <!-- <div class="python-preview" id="python-preview-panel">
+        <div class="preview-header">
+          <span>🐍 Python Preview</span>
+          <button class="toggle-preview" id="toggle-preview">▲ Hide</button>
+        </div>
+        <pre class="python-code" id="python-output-preview"></pre>
+      </div> -->
+    </section>
+
+    <!-- RIGHT PANEL: Output -->
+    <section class="output-panel">
+      <div class="panel-header">
+        <span class="panel-title">⚡ Output</span>
+        <div class="output-status" id="output-status"></div>
+      </div>
+      <div class="output-body" id="output-body">
+        <div class="output-welcome">
+          <div class="welcome-icon">🚀</div>
+          <div class="welcome-title">Ready to Run</div>
+          <div class="welcome-sub">Write emoji code on the left, hit <strong>Run Code</strong> to execute</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- DOCS PANEL (hidden by default) -->
+  <div class="docs-panel hidden" id="docs-panel">
+    <div class="docs-content" id="docs-content">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATIONS -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- SCRIPTS -->
+  <script src="js/emojiMap.js"></script>
+  <script src="js/compiler.js"></script>
+  <script src="js/runner.js"></script>
+  <script src="js/editor.js"></script>
+  <script src="js/sidebar.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
