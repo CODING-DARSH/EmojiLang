@@ -33,4 +33,4 @@ def run_code():
     os.unlink(fname)
     return jsonify({ 'stdout': result.stdout, 'stderr': result.stderr, 'exitCode': result.returncode })
 
-app.run(port=5000, debug=True)
+app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=False)
