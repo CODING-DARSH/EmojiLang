@@ -130,7 +130,7 @@
 
 window.EmojiRunner = (function () {
 
-  const SUBMIT_URL = 'https://emojilang-backend.onrender.com';
+  const SUBMIT_URL = 'https://emojilang-backend.onrender.com/run';
   const PYTHON_ID  = 71; // Python 3.8.1 on Judge0
 
   /**
