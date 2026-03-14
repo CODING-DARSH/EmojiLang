@@ -47,16 +47,16 @@ latest_submission = None
 submission_subscribers = []
 
 MODULE_LIBRARY = {
-    'm1': {'name': 'The Bookbinder', 'context': 'Binary Search on a sorted array', 'expected_time': 'O(log n)', 'expected_space': 'O(1)', 'signals': ['binary', 'mid', 'left', 'right', 'sorted']},
-    'm2': {'name': 'The Train Robbery', 'context': 'Sliding Window max sum of subarray size K', 'expected_time': 'O(n)', 'expected_space': 'O(1)', 'signals': ['window', 'sum', 'k', 'max', 'subarray']},
-    'm3': {'name': 'The Dishwasher', 'context': 'Reverse an array using stack', 'expected_time': 'O(n)', 'expected_space': 'O(n)', 'signals': ['stack', 'reverse', 'pop', 'append']},
-    'm4': {'name': 'The Zipper', 'context': 'Merge two sorted arrays using two pointers', 'expected_time': 'O(n)', 'expected_space': 'O(n)', 'signals': ['merge', 'sorted', 'pointer', 'i', 'j']},
-    'm5': {'name': 'The Floating Balloon', 'context': 'Bubble sort implementation', 'expected_time': 'O(n^2)', 'expected_space': 'O(1)', 'signals': ['bubble', 'swap', 'sort', 'for', 'range']},
-    'm6': {'name': 'Missing Puzzle Piece', 'context': 'Two Sum using hash map', 'expected_time': 'O(n)', 'expected_space': 'O(n)', 'signals': ['two', 'sum', 'hash', 'dict', 'target']},
-    'm7': {'name': 'The Bouncer', 'context': 'Remove duplicates from sorted array', 'expected_time': 'O(n)', 'expected_space': 'O(1)', 'signals': ['duplicate', 'sorted', 'unique']},
-    'm8': {'name': 'The Finger Crash', 'context': 'Palindrome check using two pointers', 'expected_time': 'O(n)', 'expected_space': 'O(1)', 'signals': ['palindrome', 'left', 'right', 'string']},
-    'm9': {'name': 'Stock Broker Trash', 'context': 'Kadane algorithm max subarray', 'expected_time': 'O(n)', 'expected_space': 'O(1)', 'signals': ['kadane', 'max', 'subarray', 'current', 'sum']},
-    'm10': {'name': 'The Masonry Wall', 'context': 'Fibonacci sequence generator', 'expected_time': 'O(n)', 'expected_space': 'O(n)', 'signals': ['fibonacci', 'sequence', 'n', 'append']},
+    'm1': {'name': 'The Bookbinder', 'context': 'Binary Search on a sorted array', 'expected_time': 'O(log n)', 'expected_space': 'O(1)', 'signals': ['binary', 'mid', 'left', 'right', 'sorted'], 'emojis': '📖 ✂️ 📖 📍'},
+    'm2': {'name': 'The Train Robbery', 'context': 'Sliding Window max sum of subarray size K', 'expected_time': 'O(n)', 'expected_space': 'O(1)', 'signals': ['window', 'sum', 'k', 'max', 'subarray'], 'emojis': '🚂 🚃 ➡️ 🛤️ 💰'},
+    'm3': {'name': 'The Dishwasher', 'context': 'Reverse an array using stack', 'expected_time': 'O(n)', 'expected_space': 'O(n)', 'signals': ['stack', 'reverse', 'pop', 'append'], 'emojis': '🍽️ 🧱 🔄 🧱'},
+    'm4': {'name': 'The Zipper', 'context': 'Merge two sorted arrays using two pointers', 'expected_time': 'O(n)', 'expected_space': 'O(n)', 'signals': ['merge', 'sorted', 'pointer', 'i', 'j'], 'emojis': '🧵 🤝 📜 ➡️ 📜 ✨'},
+    'm5': {'name': 'The Floating Balloon', 'context': 'Bubble sort implementation', 'expected_time': 'O(n^2)', 'expected_space': 'O(1)', 'signals': ['bubble', 'swap', 'sort', 'for', 'range'], 'emojis': '🎈 ⬆️ 🪂 ⬇️ 🔄'},
+    'm6': {'name': 'Missing Puzzle Piece', 'context': 'Two Sum using hash map', 'expected_time': 'O(n)', 'expected_space': 'O(n)', 'signals': ['two', 'sum', 'hash', 'dict', 'target'], 'emojis': '🧩 🔍 ❓ ➡️ 🖼️'},
+    'm7': {'name': 'The Bouncer', 'context': 'Remove duplicates from sorted array', 'expected_time': 'O(n)', 'expected_space': 'O(1)', 'signals': ['duplicate', 'sorted', 'unique'], 'emojis': '🧍‍♂️ ✅ 🧍‍♂️ ❌ 🧞'},
+    'm8': {'name': 'The Finger Crash', 'context': 'Palindrome check using two pointers', 'expected_time': 'O(n)', 'expected_space': 'O(1)', 'signals': ['palindrome', 'left', 'right', 'string'], 'emojis': '👈 🔤 👉 💥 🤝'},
+    'm9': {'name': 'Stock Broker Trash', 'context': 'Kadane algorithm max subarray', 'expected_time': 'O(n)', 'expected_space': 'O(1)', 'signals': ['kadane', 'max', 'subarray', 'current', 'sum'], 'emojis': '📉 🗑️ 📈 🎒 💰'},
+    'm10': {'name': 'The Masonry Wall', 'context': 'Fibonacci sequence generator', 'expected_time': 'O(n)', 'expected_space': 'O(n)', 'signals': ['fibonacci', 'sequence', 'n', 'append'], 'emojis': '🧱 ➕ 🧱🧱 ➡️ 🔄'},
 }
 
 submission_log = []

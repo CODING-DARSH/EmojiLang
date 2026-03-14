@@ -146,7 +146,11 @@
                 <div class="space-y-3 text-sm font-semibold">
                     <div>
                         <label class="block text-purple-200 mb-1">SELECT_DATASET:</label>
-                        <select id="broadcast-module" class="w-full bg-slate-900 border border-purple-500 text-purple-400 p-2 focus:outline-none focus:border-purple-300"></select>
+                        <select id="broadcast-module" class="w-full bg-slate-900 border border-purple-500 text-purple-400 p-2 focus:outline-none focus:border-purple-300" onchange="onBroadcastModuleChange()"></select>
+                    </div>
+                    <div>
+                        <label class="block text-purple-200 mb-1">EMOJI_PAYLOAD:</label>
+                        <input type="text" id="broadcast-emoji-payload" class="w-full bg-slate-900 border border-purple-500 text-purple-400 p-2 focus:outline-none focus:border-purple-300" placeholder="Enter emojis...">
                     </div>
                     <button onclick="startBroadcast()" class="w-full bg-purple-900/80 hover:bg-purple-600 text-white font-bold py-3 px-4 border border-purple-400 rounded transition-colors duration-200 tracking-wider">
                         FLASH TO MAIN SCREEN
@@ -293,9 +297,9 @@
 
         let modules = [
             { id: "m1", name: "The Bookbinder", emojis: "📖 ✂️ 📖 📍", solved: false, firstBlood: null },
-            { id: "m2", emojis: "🚂 🚃 ➡️ 🛤️ 💰", solved: false, firstBlood: null },
-            { id: "m3", emojis: "🍽️", solved: false, firstBlood: null },
-            { id: "m4", name: "The Zipper", emojis: "🚶 ➕ 🏃 ➡️ 🚶🏃", solved: false, firstBlood: null },
+            { id: "m2", name: "The Train Robbery", emojis: "🚂 🚃 ➡️ 🛤️ 💰", solved: false, firstBlood: null },
+            { id: "m3", name: "The Dishwasher", emojis: "🍽️ 🧱 🔄 🧱", solved: false, firstBlood: null },
+            { id: "m4", name: "The Zipper", emojis: "🧵 🤝 📜 ➡️ 📜 ✨", solved: false, firstBlood: null },
             { id: "m5", name: "The Floating Balloon", emojis: "🎈 ⬆️ 🪂 ⬇️ 🔄", solved: false, firstBlood: null },
             { id: "m6", name: "Missing Puzzle Piece", emojis: "🧩 🔍 ❓ ➡️ 🖼️", solved: false, firstBlood: null },
             { id: "m7", name: "The Bouncer", emojis: "🧍‍♂️ ✅ 🧍‍♂️ ❌ 🧞", solved: false, firstBlood: null },
@@ -318,11 +322,23 @@
         };
 
         // --- BROADCAST / FLASH EFFECT ---
+        function onBroadcastModuleChange() {
+            const modId = document.getElementById('broadcast-module').value;
+            const module = modules.find(m => m.id === modId);
+            if (module) {
+                document.getElementById('broadcast-emoji-payload').value = module.emojis;
+            }
+        }
+
         function startBroadcast() {
             const modId = document.getElementById('broadcast-module').value;
+            const customEmojis = document.getElementById('broadcast-emoji-payload').value;
             currentBroadcastModuleId = modId; // Set the active module
             const module = modules.find(m => m.id === modId);
-            publishFlashEvent(module);
+            
+            // Allow ad-hoc emoji overrides from the input field
+            const payload = { ...module, emojis: customEmojis };
+            publishFlashEvent(payload);
             
             // Auto close side panels
             adminVisible = false;
@@ -568,6 +584,7 @@
             
             modSelect.innerHTML = modsHtml;
             broadcastSelect.innerHTML = modsHtml;
+            onBroadcastModuleChange();
         }
 
         function addLog(message, isAlert = false) {
