@@ -1126,7 +1126,7 @@
             return hasValue;
         }
 
-        function injectSubmission(teamId, moduleId, sourceCode) {
+        function injectSubmission(teamId, moduleId, sourceCode, studentGuess) {
             updateSelects();
 
             let team = teams.find(t => t.id === Number(teamId));
@@ -1151,7 +1151,7 @@
             selectOptionByValue(document.getElementById('eval-team'), String(team.id));
             selectOptionByValue(document.getElementById('eval-module'), module.id);
             document.getElementById('student-code').value = String(sourceCode || '');
-            document.getElementById('student-guess').value = String(arguments[3] || '');
+            document.getElementById('student-guess').value = String(studentGuess || '');
 
             addLog(`Submission queued via API: ${team.name} -> ${module.name}.`);
             customAlert(`Incoming submission loaded for ${team.name} on ${module.name}. Ready for AI Inference.`);
