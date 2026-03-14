@@ -192,6 +192,11 @@
                     </div>
 
                     <div>
+                        <label class="block text-cyan-200 mb-1 mt-2 uppercase tracking-tight">Student_interpreted_pattern (Prompt):</label>
+                        <textarea id="student-guess" rows="2" class="w-full bg-slate-900 border border-purple-500 text-purple-300 p-2 focus:outline-none focus:border-purple-300 font-mono text-xs" placeholder="Patient's decoded guess for Phase 1..."></textarea>
+                    </div>
+
+                    <div>
                         <label class="block text-cyan-200 mb-1 mt-2">STUDENT_SOURCE_CODE:</label>
                         <textarea id="student-code" rows="4" class="w-full bg-slate-900 border border-cyan-500 text-cyan-400 p-2 focus:outline-none focus:border-cyan-300 font-mono text-xs" placeholder="Paste student code here for neural inference..."></textarea>
                     </div>
@@ -886,15 +891,26 @@
             evalBtn.classList.replace('bg-cyan-900/80', 'bg-purple-900/80');
             addLog(`Initiating neural inference on module: ${module.name}...`);
 
+            const studentGuess = document.getElementById('student-guess').value || "(No guess provided)";
+
             const promptText = `
             You are an expert computer science AI evaluator.
             The student is trying to solve: ${module.name}. 
+            The dataset presented to the student as emojis was: ${module.emojis}
             Expected approach: ${moduleContext[module.id]}.
+
+            Phase 1: Pattern Recognition
+            The student's interpretation of the emojis: "${studentGuess}"
             
+            Phase 2: Algorithm Implementation
             Student Source Code:
             ${code}
             
             Evaluate this code strictly and realistically based on 1st/2nd year CS standards.
+            - pattern_recognition (Phase 1): Does the guess or code reflect understanding of the emoji pattern?
+            - algorithm_design (Phase 2): Is the core logic correct for ${module.name}?
+            - test_case_1/2: Would typical inputs pass?
+            
             Return valid JSON with keys: pattern_recognition, algorithm_design, test_case_1, test_case_2, logs.`;
 
             try {
@@ -1121,6 +1137,7 @@
             selectOptionByValue(document.getElementById('eval-team'), String(team.id));
             selectOptionByValue(document.getElementById('eval-module'), module.id);
             document.getElementById('student-code').value = String(sourceCode || '');
+            document.getElementById('student-guess').value = String(arguments[3] || '');
 
             addLog(`Submission queued via API: ${team.name} -> ${module.name}.`);
             customAlert(`Incoming submission loaded for ${team.name} on ${module.name}. Ready for AI Inference.`);
@@ -1149,7 +1166,7 @@
                 return { ok: false, error: 'unknown_team' };
             }
 
-            return injectSubmission(team.id, payload.moduleId, payload.code || '');
+            return injectSubmission(team.id, payload.moduleId, payload.code || '', payload.decodedGuess || '');
         }
 
         function connectSubmissionStream() {
