@@ -768,12 +768,16 @@
                 if (!key) break;
                 tried.add(key);
 
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 12000); // 12s timeout
+
                 const response = await fetch(GROQ_API_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${key}`
                     },
+                    signal: controller.signal,
                     body: JSON.stringify({
                         model: groqConfig.model,
                         max_tokens: groqConfig.maxTokens,
@@ -782,12 +786,13 @@
                         messages: [
                             {
                                 role: 'system',
-                                content: 'You are a strict CS evaluator for first and second year students. Return JSON only with keys: pattern_recognition, algorithm_design, test_case_1, test_case_2, logs.'
+                                content: 'You are a strict CS evaluator. Return JSON only with keys: pattern_recognition, algorithm_design, test_case_1, test_case_2, logs.'
                             },
                             { role: 'user', content: promptText }
                         ]
                     })
                 });
+                clearTimeout(timeoutId);
 
                 if (response.ok) {
                     const payload = await response.json();
@@ -909,6 +914,7 @@
                 
                 addLog(`AI INF: "${evaluation.logs}"`);
                 submitEvaluation();
+                document.getElementById('student-code').value = ''; 
 
             } catch (error) {
                 console.error(error);
@@ -918,7 +924,6 @@
                 evalBtn.disabled = false;
                 evalBtn.innerText = "RUN AI INFERENCE ->";
                 evalBtn.classList.replace('bg-purple-900/80', 'bg-cyan-900/80');
-                document.getElementById('student-code').value = ''; 
             }
         }
 
