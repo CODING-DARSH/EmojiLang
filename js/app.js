@@ -11,6 +11,9 @@
     window.EmojiEditor.init();
     window.EmojiSidebar.init();
     window.EmojiUI.init();
+    if (window.Round2Submission && typeof window.Round2Submission.init === 'function') {
+      window.Round2Submission.init();
+    }
 
     bindButtons();
     bindTabs();
@@ -24,6 +27,21 @@
     document.getElementById('btn-run').addEventListener('click', runCode);
     document.getElementById('btn-clear').addEventListener('click', clearEditor);
     document.getElementById('btn-example').addEventListener('click', showExamplePicker);
+
+    const displayBtn = document.getElementById('btn-display');
+    if (displayBtn) {
+      displayBtn.addEventListener('click', () => {
+        window.location.href = '/display';
+      });
+    }
+
+    const adminBtn = document.getElementById('btn-admin');
+    if (adminBtn) {
+      adminBtn.addEventListener('click', () => {
+        window.location.href = '/evaluation';
+      });
+    }
+
   }
 
   // ── TABS ───────────────────────────────────────────────────────────

@@ -192,3 +192,163 @@
   color: var(--yellow);
   font-size: 13px;
 }
+
+/* ─── ROUND 2 SUBMISSION PANEL ───────── */
+.round2-panel {
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.round2-head {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  color: var(--accent3);
+}
+
+.round2-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.round2-flash-preview {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.round2-flash-preview .round2-flash-emoji-tile {
+  width: 32px;
+  height: 32px;
+  display: block;
+  border-radius: 6px;
+  border: 1px solid var(--border2);
+  background: var(--surface2);
+  image-rendering: auto;
+}
+
+.round2-panel input,
+.round2-panel textarea {
+  width: 100%;
+  border: 1px solid var(--border2);
+  background: var(--surface2);
+  color: var(--text);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 7px 8px;
+}
+
+.round2-panel textarea {
+  resize: vertical;
+  min-height: 52px;
+}
+
+.round2-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.round2-actions button {
+  flex: 1;
+  border: none;
+  border-radius: var(--radius);
+  padding: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  background: var(--accent3);
+  color: #071219;
+}
+
+.round2-actions .round2-hint {
+  background: var(--accent2);
+  color: #f4e8ff;
+}
+
+.round2-result {
+  font-size: 11px;
+  color: var(--text2);
+  min-height: 18px;
+}
+
+/* ─── PARTICIPANT TEAM ACCESS GATE ──── */
+.team-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(4, 8, 18, 0.86);
+  backdrop-filter: blur(6px);
+}
+
+.team-gate.open {
+  display: flex;
+}
+
+.team-gate-card {
+  width: min(460px, 100%);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  background: var(--surface);
+  padding: 18px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.38);
+}
+
+.team-gate-card h2 {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--text);
+}
+
+.team-gate-card p {
+  margin: 0 0 12px;
+  color: var(--text2);
+  font-size: 12px;
+}
+
+.team-gate-form {
+  display: flex;
+  gap: 8px;
+}
+
+.team-gate-form input {
+  flex: 1;
+  border: 1px solid var(--border2);
+  background: var(--surface2);
+  color: var(--text);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 9px 10px;
+}
+
+.team-gate-form button {
+  border: none;
+  border-radius: var(--radius);
+  padding: 9px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  background: var(--accent3);
+  color: #071219;
+}
+
+.team-gate-error {
+  margin-top: 10px;
+  min-height: 16px;
+  font-size: 11px;
+  color: var(--red);
+}

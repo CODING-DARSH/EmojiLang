@@ -1,26 +1,108 @@
 /* ─── SIDEBAR ────────────────────────── */
 .sidebar {
-  width: var(--sidebar-w);
-  background: var(--surface);
-  border-right: 1px solid var(--border);
+  width: min(320px, calc(100vw - 40px));
+  background: rgba(15, 15, 26, 0.96);
+  border: 1px solid var(--border2);
+  border-right: 1px solid var(--border2);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   overflow: hidden;
+  position: absolute;
+  z-index: 40;
+  top: 16px;
+  left: 16px;
+  max-height: calc(100% - 32px);
+  border-radius: 14px;
+  box-shadow: var(--shadow), 0 0 24px rgba(124, 58, 237, 0.12);
+  backdrop-filter: blur(8px);
+  transition: transform 0.2s ease, opacity 0.2s ease, width 0.2s ease, height 0.2s ease, top 0.2s ease, right 0.2s ease, bottom 0.2s ease, left 0.2s ease;
+}
+
+.sidebar.is-minimized {
+  width: 190px;
+  max-height: 48px;
+}
+
+.sidebar.is-minimized .sidebar-search,
+.sidebar.is-minimized .emoji-list {
+  display: none;
+}
+
+.sidebar.corner-top-left {
+  top: 16px;
+  left: 16px;
+  right: auto;
+  bottom: auto;
+}
+
+.sidebar.corner-top-right {
+  top: 16px;
+  right: 16px;
+  left: auto;
+  bottom: auto;
+}
+
+.sidebar.corner-bottom-left {
+  bottom: 16px;
+  left: 16px;
+  top: auto;
+  right: auto;
+}
+
+.sidebar.corner-bottom-right {
+  bottom: 16px;
+  right: 16px;
+  top: auto;
+  left: auto;
 }
 
 .sidebar-header {
-  height: 40px;
+  min-height: 40px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
-  padding: 0 14px;
+  padding: 8px 10px 8px 14px;
   font-size: 12px;
   font-weight: 700;
   color: var(--text2);
-  background: var(--surface);
+  background: rgba(15, 15, 26, 0.94);
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
+}
+
+.sidebar-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.sidebar-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sidebar-control,
+.sidebar-corner {
+  border: 1px solid var(--border2);
+  background: var(--surface2);
+  color: var(--text2);
+  border-radius: 6px;
+  padding: 4px 7px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.sidebar-control:hover,
+.sidebar-corner:hover,
+.sidebar-corner.is-active {
+  color: var(--text);
+  border-color: var(--accent3);
 }
 
 .sidebar-search {
