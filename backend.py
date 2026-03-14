@@ -13,10 +13,10 @@ app = Flask(__name__)
 CORS(app, origins=['*'])
 
 flash_state = {
-    'moduleId': None,
-    'name': None,
-    'emojis': None,
-    'ts': None
+    'moduleId': 'm4',
+    'name': 'The Zipper',
+    'emojis': '🧵 🤝 📜 ➡️ 📜 ✨',
+    'ts': 1741968840000
 }
 flash_subscribers = []
 leaderboard_state = {
