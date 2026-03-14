@@ -20,9 +20,26 @@ flash_state = {
 }
 flash_subscribers = []
 leaderboard_state = {
-    'teams': [],
-    'modules': [],
-    'currentBroadcastModuleId': None,
+    'teams': [
+        {'id': 1, 'name': 'Cyber Phantoms', 'score': 450, 'patches': 5, 'hintsUsed': 1},
+        {'id': 2, 'name': 'Null Pointers', 'score': 380, 'patches': 4, 'hintsUsed': 2},
+        {'id': 3, 'name': 'Logic Bombs', 'score': 310, 'patches': 3, 'hintsUsed': 0},
+        {'id': 4, 'name': 'Bit Wizards', 'score': 290, 'patches': 3, 'hintsUsed': 1},
+        {'id': 5, 'name': 'Deep Flow', 'score': 150, 'patches': 1, 'hintsUsed': 3}
+    ],
+    'modules': [
+        {'id': 'm1', 'name': 'The Bookbinder', 'solved': True, 'firstBlood': 'Cyber Phantoms', 'expected_time': 'O(log n)', 'expected_space': 'O(1)'},
+        {'id': 'm2', 'name': 'The Train Robbery', 'solved': True, 'firstBlood': 'Null Pointers', 'expected_time': 'O(n)', 'expected_space': 'O(1)'},
+        {'id': 'm3', 'name': 'The Dishwasher', 'solved': True, 'firstBlood': 'Logic Bombs', 'expected_time': 'O(n)', 'expected_space': 'O(n)'},
+        {'id': 'm4', 'name': 'The Zipper', 'solved': False, 'firstBlood': None, 'expected_time': 'O(n)', 'expected_space': 'O(n)'},
+        {'id': 'm5', 'name': 'The Floating Balloon', 'solved': False, 'firstBlood': None, 'expected_time': 'O(n^2)', 'expected_space': 'O(1)'},
+        {'id': 'm6', 'name': 'Missing Puzzle Piece', 'solved': False, 'firstBlood': None, 'expected_time': 'O(n)', 'expected_space': 'O(n)'},
+        {'id': 'm7', 'name': 'The Bouncer', 'solved': False, 'firstBlood': None, 'expected_time': 'O(n)', 'expected_space': 'O(1)'},
+        {'id': 'm8', 'name': 'The Finger Crash', 'solved': False, 'firstBlood': None, 'expected_time': 'O(n)', 'expected_space': 'O(1)'},
+        {'id': 'm9', 'name': 'Stock Broker Trash', 'solved': False, 'firstBlood': None, 'expected_time': 'O(n)', 'expected_space': 'O(1)'},
+        {'id': 'm10', 'name': 'The Masonry Wall', 'solved': False, 'firstBlood': None, 'expected_time': 'O(n)', 'expected_space': 'O(n)'}
+    ],
+    'currentBroadcastModuleId': 'm4',
     'ts': None
 }
 leaderboard_subscribers = []
