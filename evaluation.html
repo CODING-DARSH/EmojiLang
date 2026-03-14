@@ -298,7 +298,13 @@
         let isSyncingRemoteState = false;
         const hackerEmojis = ['🤖', '👾', '📡', '🔋', '🔌', '💻', '💾', '⚙️', '🧬', '🦠', '🚀', '🌌', '⚡', '🔥', '🧩', '🎲', '🧠', '👁️', '🔐', '🔑', '🛡️', '⚔️'];
 
-        let teams = [];
+        let teams = [
+            { id: 1, name: 'Cyber Phantoms', score: 450, patches: 5, hintsUsed: 1 },
+            { id: 2, name: 'Null Pointers', score: 380, patches: 4, hintsUsed: 2 },
+            { id: 3, name: 'Logic Bombs', score: 310, patches: 3, hintsUsed: 0 },
+            { id: 4, name: 'Bit Wizards', score: 290, patches: 3, hintsUsed: 1 },
+            { id: 5, name: 'Deep Flow', score: 150, patches: 1, hintsUsed: 3 }
+        ];
 
         let modules = [
             { id: "m1", name: "The Bookbinder", emojis: "📖 ✂️ 📖 📍", solved: false, firstBlood: null },
