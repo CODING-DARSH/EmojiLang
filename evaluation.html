@@ -1062,14 +1062,22 @@
             let t2 = document.getElementById('chk-test2').checked;
             let brute = document.getElementById('chk-brute').checked;
 
+            // At least something must be checked to process, UNLESS the user is forcing 0. 
+            // But let's check if any box is checked.
+            if (!dec && !log && !t1 && !t2 && !brute) {
+                customAlert("No parameters checked. Evaluation aborted. Please select scoring criteria.");
+                return;
+            }
+
             let earnedPoints = 0;
-            if (dec && !brute) earnedPoints += 10;
+            if (dec) earnedPoints += 10;
             if (log) earnedPoints += 10;
             if (t1) earnedPoints += 15;
             if (t2) earnedPoints += 15;
             if (brute) earnedPoints -= 10;
 
             let gotSOTA = false;
+            // SOTA only if both test cases pass
             if (t1 && t2 && !module.firstBlood) {
                 earnedPoints += 15;
                 module.firstBlood = team.name;
@@ -1077,11 +1085,13 @@
                 gotSOTA = true;
             }
 
-            if (earnedPoints > 0) {
+            // Update scores regardless if total > 0 OR if some positive progress was made
+            if (earnedPoints != 0 || dec || log || t1 || t2) {
                 team.score += earnedPoints;
                 if (t1 && t2) team.patches += 1; 
 
-                addLog(`Inference confirmed: ${team.name} processed ${module.name} for +${earnedPoints} accuracy points.`);
+                const sign = earnedPoints >= 0 ? '+' : '';
+                addLog(`Inference confirmed: ${team.name} processed ${module.name} for ${sign}${earnedPoints} accuracy points.`);
                 if (gotSOTA) {
                     addLog(`>>> SOTA (STATE OF THE ART) ACHIEVED BY ${team.name} on ${module.name}! <<<`, true);
                 }
@@ -1102,8 +1112,6 @@
                 // Pop open the leaderboard automatically to show off points if it's hidden
                 if(!leaderboardVisible) toggleLeaderboard();
                 
-            } else {
-                customAlert("Evaluation generated 0 points. Review parameters.");
             }
         }
 
