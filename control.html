@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hack & Crack — Control Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root{--bg:#080810;--surface:#0f0f1a;--surface2:#16162a;--border:#252538;--border2:#32324a;--accent:#3b82f6;--accent-dim:rgba(59,130,246,0.15);--accent2:#7c3aed;--accent3:#06b6d4;--green:#22c55e;--green-dim:rgba(34,197,94,0.12);--red:#ef4444;--red-dim:rgba(239,68,68,0.12);--yellow:#eab308;--yellow-dim:rgba(234,179,8,0.12);--text:#e2e8f0;--text2:#94a3b8;--muted:#475569;--font-mono:'Space Mono',monospace;--font-display:'Syne',sans-serif;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:var(--bg);color:var(--text);font-family:var(--font-mono);min-height:100vh;}
+    .admin-login{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999;}
+    .admin-login.hidden{display:none;}
+    .admin-card{background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:40px;width:380px;box-shadow:0 24px 80px rgba(0,0,0,0.5);}
+    .admin-card h2{font-family:var(--font-display);font-size:22px;margin-bottom:6px;}
+    .admin-card p{font-size:12px;color:var(--muted);margin-bottom:24px;}
+    .admin-card input{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:12px 14px;border-radius:8px;font-family:var(--font-mono);font-size:14px;margin-bottom:12px;outline:none;}
+    .admin-card input:focus{border-color:var(--accent);}
+    .admin-card .btn-enter{width:100%;background:var(--accent);color:white;border:none;padding:12px;border-radius:8px;font-family:var(--font-mono);font-size:13px;font-weight:700;cursor:pointer;}
+    .admin-err{font-size:12px;color:var(--red);margin-bottom:8px;min-height:16px;}
+    header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:relative;}
+    header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),var(--accent2),transparent);}
+    .logo{font-family:var(--font-display);font-size:18px;font-weight:900;}
+    .logo span{color:var(--accent);}
+    .hdr-right{display:flex;align-items:center;gap:10px;}
+    .live-badge{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--green);background:var(--green-dim);padding:4px 10px;border-radius:4px;border:1px solid rgba(34,197,94,0.3);}
+    .live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;}
+    main{padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:1400px;margin:0 auto;}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+    .card-header{padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:700;}
+    .card-body{padding:16px;}
+    .full{grid-column:1/-1;}
+    .round-status{display:flex;align-items:center;gap:14px;padding:16px;background:var(--surface2);border-radius:8px;margin-bottom:14px;}
+    .round-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;}
+    .round-dot.wait{background:var(--yellow);animation:pulse 1.5s infinite;}
+    .round-dot.live{background:var(--green);}
+    .round-lbl{font-family:var(--font-display);font-size:15px;font-weight:700;}
+    .round-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+    .msg-row{display:flex;gap:8px;}
+    .msg-input{flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:7px;font-family:var(--font-mono);font-size:12px;outline:none;}
+    .msg-input:focus{border-color:var(--accent);}
+    .btn{display:inline-flex;align-items:center;gap:5px;padding:9px 16px;border-radius:7px;font-family:var(--font-mono);font-size:11px;font-weight:700;cursor:pointer;border:none;transition:all 0.2s;}
+    .btn-green{background:var(--green);color:white;}
+    .btn-green:hover{background:#16a34a;}
+    .btn-red{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.3);}
+    .btn-red:hover{background:rgba(239,68,68,0.2);}
+    .btn-ghost{background:var(--surface2);color:var(--text2);border:1px solid var(--border);}
+    .btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;padding:14px 14px 0;}
+    .stat{background:var(--surface2);border-radius:7px;padding:12px;text-align:center;}
+    .stat-n{font-family:var(--font-display);font-size:26px;font-weight:900;color:var(--accent);}
+    .stat-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:1px;}
+    table{width:100%;border-collapse:collapse;font-size:12px;}
+    th{text-align:left;padding:8px 12px;background:var(--surface2);color:var(--muted);font-size:10px;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid var(--border);}
+    td{padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+    tr:last-child td{border-bottom:none;}
+    tr:hover td{background:rgba(255,255,255,0.02);}
+    .tn{font-weight:700;color:var(--text);}
+    .rn{font-size:11px;color:var(--muted);}
+    .online-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:var(--green);background:var(--green-dim);padding:2px 7px;border-radius:4px;border:1px solid rgba(34,197,94,0.3);}
+    .online-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;}
+    .btn-sm{font-family:var(--font-mono);font-size:10px;font-weight:700;padding:4px 9px;border-radius:4px;cursor:pointer;border:none;transition:all 0.2s;}
+    .btn-disc{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.3);}
+    .btn-disc:hover{background:rgba(239,68,68,0.25);}
+    .btn-unlock{background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.3);}
+    .btn-unlock:hover{background:rgba(34,197,94,0.2);}
+    .empty{text-align:center;padding:28px;color:var(--muted);font-size:12px;}
+    .badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;}
+    .badge-cyan{color:var(--accent3);background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);}
+    .badge-red{color:var(--red);background:var(--red-dim);border:1px solid rgba(239,68,68,0.3);animation:pulse 1.5s infinite;}
+    .badge-yellow{color:var(--yellow);background:var(--yellow-dim);border:1px solid rgba(234,179,8,0.3);}
+    .badge-green{color:var(--green);background:var(--green-dim);border:1px solid rgba(34,197,94,0.3);}
+    .log-box{max-height:240px;overflow-y:auto;}
+    .log-item{display:flex;gap:9px;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px;}
+    .log-item:last-child{border-bottom:none;}
+    .log-time{color:var(--muted);flex-shrink:0;width:65px;}
+    .log-text{color:var(--text2);flex:1;line-height:1.5;}
+    .log-text strong{color:var(--text);}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+  </style>
+</head>
+<body>
+  <script src="js/config.js"></script>
+
+  <div class="admin-login" id="admin-login">
+    <div class="admin-card">
+      <h2>⚔️ Admin Access</h2>
+      <p>Enter the admin password to access the control panel</p>
+      <input type="password" id="admin-pass" placeholder="Admin password" />
+      <div class="admin-err" id="admin-err"></div>
+      <button class="btn-enter" id="admin-btn">Enter Control Panel →</button>
+    </div>
+  </div>
+
+  <header>
+    <div class="logo">⚔️ Hack &amp; <span>Crack</span> — Control Panel</div>
+    <div class="hdr-right">
+      <div class="live-badge"><div class="live-dot"></div> LIVE</div>
+      <span style="font-size:11px;color:var(--muted)" id="last-update">Updating...</span>
+      <a href="/leaderboard.html" style="font-size:11px;color:var(--accent);border:1px solid rgba(59,130,246,0.3);padding:5px 11px;border-radius:4px;text-decoration:none;">🏆 Leaderboard</a>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ROUND CONTROL -->
+    <div class="card full">
+      <div class="card-header">🎮 Round Control <span id="round-badge" class="badge badge-yellow">⏳ Waiting</span></div>
+      <div class="card-body">
+        <div class="round-status">
+          <div class="round-dot wait" id="round-dot"></div>
+          <div>
+            <div class="round-lbl" id="round-lbl">Round 2 — Not Released</div>
+            <div class="round-sub" id="round-sub">Teams are on the waiting screen</div>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-green" id="btn-release">🚀 Release Round</button>
+          <button class="btn btn-red"   id="btn-lock">🔒 Lock Round</button>
+          <button class="btn btn-ghost" id="btn-clear-lb">🗑️ Clear Leaderboard</button>
+        </div>
+        <div class="msg-row">
+          <input type="text" class="msg-input" id="wait-msg" value="Waiting for Round 2 to start..." />
+          <button class="btn btn-ghost" id="btn-update-msg">📨 Update</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIVE DEVICES -->
+    <div class="card">
+      <div class="card-header">💻 Active Devices <span class="badge badge-cyan" id="devices-count">0 online</span></div>
+      <div style="padding:0;">
+        <div class="stats">
+          <div class="stat"><div class="stat-n" id="s-teams">0</div><div class="stat-l">Registered</div></div>
+          <div class="stat"><div class="stat-n" id="s-online" style="color:var(--green)">0</div><div class="stat-l">Online</div></div>
+          <div class="stat"><div class="stat-n" id="s-solves" style="color:var(--accent2)">0</div><div class="stat-l">Solves</div></div>
+          <div class="stat"><div class="stat-n" id="s-viols" style="color:var(--red)">0</div><div class="stat-l">Violations</div></div>
+        </div>
+        <table style="margin-top:10px;">
+          <thead><tr><th>Team</th><th>Status</th><th>Last Active</th><th>Action</th></tr></thead>
+          <tbody id="devices-body"><tr><td colspan="4" class="empty">No active sessions</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ACTIVITY LOG -->
+    <div class="card">
+      <div class="card-header">
+        📋 Activity Log
+        <button class="btn btn-ghost" style="font-size:10px;padding:3px 9px;" id="btn-clear-log">Clear</button>
+      </div>
+      <div class="card-body" style="padding:10px 14px;">
+        <div class="log-box" id="log-box"><div class="empty">No activity yet</div></div>
+      </div>
+    </div>
+
+    <!-- UNLOCK REQUESTS -->
+    <div class="card full">
+      <div class="card-header">🔓 Unlock Requests <span class="badge badge-cyan" id="unlock-badge">0 pending</span></div>
+      <table>
+        <thead><tr><th>Team</th><th>Roll</th><th>Reason</th><th>Requested At</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody id="unlock-body"><tr><td colspan="6" class="empty">No unlock requests</td></tr></tbody>
+      </table>
+    </div>
+
+    <!-- TAB VIOLATIONS -->
+    <div class="card full">
+      <div class="card-header">👁️ Tab Switch Violations <span class="badge badge-cyan" id="tab-badge">0 violations</span></div>
+      <table>
+        <thead><tr><th>Team</th><th>Roll</th><th>Switches</th><th>Last At</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody id="tab-body"><tr><td colspan="6" class="empty">No violations</td></tr></tbody>
+      </table>
+    </div>
+
+  </main>
+
+<script>
+  let actLog = [];
+
+  // ── ADMIN LOGIN ───────────────────────────────────────────────────
+  document.getElementById('admin-btn').addEventListener('click', async () => {
+    const pass = document.getElementById('admin-pass').value;
+    try {
+      const res  = await fetch(`${HC_CONFIG.BASE_URL}/admin/verify`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ password: pass })
+      });
+      const data = await res.json();
+      if (data.success) {
+        document.getElementById('admin-login').classList.add('hidden');
+        loadAll();
+        setInterval(loadAll, 4000);
+      } else {
+        document.getElementById('admin-err').textContent = '❌ Wrong password';
+      }
+    } catch(e) {
+      document.getElementById('admin-err').textContent = '❌ Connection error';
+    }
+  });
+  document.getElementById('admin-pass').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('admin-btn').click();
+  });
+
+  // ── LOAD ALL ──────────────────────────────────────────────────────
+  async function loadAll() {
+    await Promise.all([
+      loadRound(), loadSessions(), loadSolves(),
+      loadTeams(), loadUnlocks(), loadViolations()
+    ]);
+    document.getElementById('last-update').textContent = 'Updated: ' + new Date().toLocaleTimeString();
+  }
+
+  // ── ROUND ─────────────────────────────────────────────────────────
+  async function loadRound() {
+    const d = await HC_CONFIG.sbFetch('round_control?id=eq.1&select=*');
+    if (!d || !d.length) return;
+    const r = d[0];
+    const dot = document.getElementById('round-dot');
+    const badge = document.getElementById('round-badge');
+    if (r.round_released) {
+      dot.className = 'round-dot live';
+      document.getElementById('round-lbl').textContent = 'Round 2 — LIVE 🚀';
+      document.getElementById('round-sub').textContent = 'Teams redirected to IDE';
+      badge.className = 'badge badge-green'; badge.textContent = '🟢 Released';
+    } else {
+      dot.className = 'round-dot wait';
+      document.getElementById('round-lbl').textContent = 'Round 2 — Not Released';
+      document.getElementById('round-sub').textContent = 'Teams on waiting screen';
+      badge.className = 'badge badge-yellow'; badge.textContent = '⏳ Waiting';
+    }
+    if (r.message) document.getElementById('wait-msg').value = r.message;
+  }
+
+  // ── SESSIONS ──────────────────────────────────────────────────────
+  async function loadSessions() {
+    const ss = await HC_CONFIG.sbFetch('sessions?is_active=eq.true&select=*&order=logged_in_at.asc');
+    if (!ss) return;
+    document.getElementById('s-online').textContent      = ss.length;
+    document.getElementById('devices-count').textContent = `${ss.length} online`;
+    const tb = document.getElementById('devices-body');
+    if (!ss.length) { tb.innerHTML = '<tr><td colspan="4" class="empty">No active sessions</td></tr>'; return; }
+    tb.innerHTML = ss.map(s => {
+      const secs = Math.round((Date.now() - new Date(s.last_activity)) / 1000);
+      const t    = secs < 60 ? `${secs}s ago` : `${Math.round(secs/60)}m ago`;
+      return `<tr>
+        <td><div class="tn">${esc(s.team_name)}</div><div class="rn">${esc(s.roll_number)}</div></td>
+        <td><span class="online-badge"><div class="online-dot"></div> Online</span></td>
+        <td style="color:var(--muted);font-size:11px;">${t}</td>
+        <td><button class="btn-sm btn-disc" onclick="disconnect('${s.id}','${esc(s.team_name)}')">Disconnect</button></td>
+      </tr>`;
+    }).join('');
+  }
+
+  async function disconnect(id, name) {
+    if (!confirm(`Disconnect ${name}?`)) return;
+    await HC_CONFIG.sbFetch(`sessions?id=eq.${id}`, 'PATCH', { is_active: false });
+    addLog(`🔌 Disconnected <strong>${name}</strong>`);
+    loadSessions();
+  }
+
+  async function loadSolves() {
+    try {
+      const r = await fetch(`${HC_CONFIG.BASE_URL}/leaderboard`);
+      const d = await r.json();
+      document.getElementById('s-solves').textContent = d.length;
+    } catch(e) {}
+  }
+
+  async function loadTeams() {
+    const t = await HC_CONFIG.sbFetch('teams?select=id');
+    if (t) document.getElementById('s-teams').textContent = t.length;
+  }
+
+  // ── UNLOCK REQUESTS (from Supabase) ───────────────────────────────
+  async function loadUnlocks() {
+    const data = await HC_CONFIG.sbFetch(
+      'unlock_requests?select=*&order=requested_at.desc'
+    );
+    if (!data) return;
+
+    const pending = data.filter(r => r.status === 'pending');
+    const badge   = document.getElementById('unlock-badge');
+    if (pending.length > 0) {
+      badge.className   = 'badge badge-red';
+      badge.textContent = `${pending.length} pending 🔔`;
+    } else {
+      badge.className   = 'badge badge-cyan';
+      badge.textContent = `${data.length} total`;
+    }
+
+    const tb = document.getElementById('unlock-body');
+    if (!data.length) {
+      tb.innerHTML = '<tr><td colspan="6" class="empty">No unlock requests</td></tr>';
+      return;
+    }
+    tb.innerHTML = data.map(r => `
+      <tr>
+        <td><div class="tn">${esc(r.team_name)}</div></td>
+        <td><div class="rn">${esc(r.roll_number)}</div></td>
+        <td style="font-size:11px;color:${r.reason === 'tab_switching' ? 'var(--red)' : 'var(--yellow)'};">
+          ${r.reason === 'tab_switching' ? '👁️ Tab switching' : '🔑 Wrong password'}
+        </td>
+        <td style="color:var(--muted);font-size:11px;">${new Date(r.requested_at).toLocaleTimeString()}</td>
+        <td>
+          <span class="badge ${r.status === 'pending' ? 'badge-yellow' : 'badge-green'}" style="font-size:10px;">
+            ${r.status === 'pending' ? '⏳ Pending' : '✅ Approved'}
+          </span>
+        </td>
+        <td>
+          ${r.status === 'pending'
+            ? `<button class="btn-sm btn-unlock" onclick="approveUnlock('${r.id}','${esc(r.roll_number)}','${esc(r.team_name)}')">✅ Unlock</button>`
+            : '—'
+          }
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  async function approveUnlock(id, roll, name) {
+    if (!confirm(`Unlock ${name}?`)) return;
+
+    // 1. Update unlock_request status in Supabase
+    await HC_CONFIG.sbFetch(`unlock_requests?id=eq.${id}`, 'PATCH', { status: 'approved' });
+
+    // 2. Clear tab violations for this roll
+    await HC_CONFIG.sbFetch(
+      `tab_violations?roll_number=eq.${encodeURIComponent(roll)}`,
+      'PATCH',
+      { is_locked: false, switch_count: 0 }
+    );
+
+    // 3. Clear backend failed attempts
+    await fetch(`${HC_CONFIG.BASE_URL}/unlock/approve`, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ secret: HC_CONFIG.JUDGE_SECRET, roll })
+    });
+
+    addLog(`🔓 Unlocked <strong>${name}</strong>`);
+    loadUnlocks();
+    loadViolations();
+  }
+
+  // ── TAB VIOLATIONS (from Supabase) ────────────────────────────────
+  async function loadViolations() {
+    const data = await HC_CONFIG.sbFetch(
+      'tab_violations?select=*&order=switch_count.desc'
+    );
+    if (!data) return;
+
+    const locked = data.filter(v => v.is_locked).length;
+    document.getElementById('s-viols').textContent = data.length;
+    const badge = document.getElementById('tab-badge');
+    if (locked > 0) {
+      badge.className   = 'badge badge-red';
+      badge.textContent = `${locked} locked 🔒`;
+    } else {
+      badge.className   = 'badge badge-cyan';
+      badge.textContent = `${data.length} violation${data.length !== 1 ? 's' : ''}`;
+    }
+
+    const tb = document.getElementById('tab-body');
+    if (!data.length) {
+      tb.innerHTML = '<tr><td colspan="6" class="empty">No violations</td></tr>';
+      return;
+    }
+    tb.innerHTML = data.map(v => `
+      <tr>
+        <td><div class="tn">${esc(v.team_name)}</div></td>
+        <td><div class="rn">${esc(v.roll_number)}</div></td>
+        <td>
+          <div style="display:flex;align-items:center;gap:5px;">
+            ${[1,2,3].map(i => `
+              <div style="width:9px;height:9px;border-radius:50%;
+                background:${i <= v.switch_count
+                  ? (v.switch_count >= 3 ? 'var(--red)' : 'var(--yellow)')
+                  : 'var(--surface2)'};
+                border:1px solid ${i <= v.switch_count
+                  ? (v.switch_count >= 3 ? 'var(--red)' : 'var(--yellow)')
+                  : 'var(--border)'};
+              "></div>
+            `).join('')}
+            <span style="font-size:11px;color:${v.switch_count >= 3 ? 'var(--red)' : 'var(--yellow)'};">
+              ${v.switch_count}/3
+            </span>
+          </div>
+        </td>
+        <td style="color:var(--muted);font-size:11px;">${esc(v.last_switch_at) || '—'}</td>
+        <td>
+          <span class="badge ${v.is_locked ? 'badge-red' : 'badge-yellow'}" style="font-size:10px;">
+            ${v.is_locked ? '🔒 Locked' : '⚠️ Warning'}
+          </span>
+        </td>
+        <td>
+          ${v.is_locked
+            ? `<button class="btn-sm btn-unlock" onclick="unlockTab('${esc(v.roll_number)}','${esc(v.team_name)}')">✅ Unlock</button>`
+            : '—'
+          }
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  async function unlockTab(roll, name) {
+    if (!confirm(`Unlock tab violation for ${name}?`)) return;
+
+    // Clear tab violation
+    await HC_CONFIG.sbFetch(
+      `tab_violations?roll_number=eq.${encodeURIComponent(roll)}`,
+      'PATCH',
+      { is_locked: false, switch_count: 0 }
+    );
+
+    // Approve any pending unlock request
+    const reqs = await HC_CONFIG.sbFetch(
+      `unlock_requests?roll_number=eq.${encodeURIComponent(roll)}&status=eq.pending&select=id`
+    );
+    if (reqs && reqs.length) {
+      await HC_CONFIG.sbFetch(`unlock_requests?id=eq.${reqs[0].id}`, 'PATCH', { status: 'approved' });
+    }
+
+    // Clear backend failed attempts too
+    await fetch(`${HC_CONFIG.BASE_URL}/unlock/approve`, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ secret: HC_CONFIG.JUDGE_SECRET, roll })
+    });
+
+    addLog(`🔓 Tab violation cleared for <strong>${name}</strong>`);
+    loadViolations();
+    loadUnlocks();
+  }
+
+  // ── ROUND ACTIONS ─────────────────────────────────────────────────
+  document.getElementById('btn-release').addEventListener('click', async () => {
+    if (!confirm('Release Round 2?')) return;
+    await HC_CONFIG.sbFetch('round_control?id=eq.1', 'PATCH', { round_released: true, released_at: new Date().toISOString() });
+    addLog('🚀 <strong>Round 2 Released</strong>');
+    loadRound();
+  });
+
+  document.getElementById('btn-lock').addEventListener('click', async () => {
+    if (!confirm('Lock round?')) return;
+    await HC_CONFIG.sbFetch('round_control?id=eq.1', 'PATCH', { round_released: false });
+    addLog('🔒 <strong>Round Locked</strong>');
+    loadRound();
+  });
+
+  document.getElementById('btn-update-msg').addEventListener('click', async () => {
+    const msg = document.getElementById('wait-msg').value.trim();
+    if (!msg) return;
+    await HC_CONFIG.sbFetch('round_control?id=eq.1', 'PATCH', { message: msg });
+    addLog('📨 Updated waiting message');
+  });
+
+  document.getElementById('btn-clear-lb').addEventListener('click', async () => {
+    if (!confirm('Clear leaderboard?')) return;
+    const r = await fetch(`${HC_CONFIG.BASE_URL}/clear`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ secret: HC_CONFIG.JUDGE_SECRET })
+    });
+    const d = await r.json();
+    if (d.success) addLog('🗑️ <strong>Leaderboard cleared</strong>');
+  });
+
+  // ── LOG ───────────────────────────────────────────────────────────
+  function addLog(text) {
+    actLog.unshift({ time: new Date().toLocaleTimeString(), text });
+    if (actLog.length > 50) actLog.pop();
+    const el = document.getElementById('log-box');
+    el.innerHTML = actLog.map(l =>
+      `<div class="log-item"><span class="log-time">${l.time}</span><span class="log-text">${l.text}</span></div>`
+    ).join('');
+  }
+
+  document.getElementById('btn-clear-log').addEventListener('click', () => {
+    actLog = [];
+    document.getElementById('log-box').innerHTML = '<div class="empty">No activity yet</div>';
+  });
+
+  function esc(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,'&#39;');
+  }
+</script>
+</body>
+</html>

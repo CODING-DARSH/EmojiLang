@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="css/editor.css" />
   <link rel="stylesheet" href="css/output.css" />
   <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/participant.css" />
 </head>
 <body>
 
@@ -30,40 +31,52 @@
       </nav>
     </div>
     <div class="topbar-right">
+      <div class="participant-badge" id="participant-badge"></div>
+      <select class="question-select" id="question-select">
+        <option value="">Select Question...</option>
+      </select>
       <button class="btn btn-ghost" id="btn-clear">🗑️ Clear</button>
-      <button class="btn btn-ghost" id="btn-example">📂 Load Example</button>
-      <button class="btn btn-run" id="btn-run">
-        <span class="run-icon">▶</span>
-        <span class="run-text">Run Code</span>
-      </button>
+      <button class="btn btn-ghost" id="btn-example">📂 Examples</button>
+      <button class="btn btn-run" id="btn-run">▶ Run</button>
+      <button class="btn btn-submit" id="btn-submit" disabled>📤 Submit</button>
     </div>
   </header>
 
   <!-- MAIN WORKSPACE -->
   <main class="workspace">
 
-    <!-- LEFT SIDEBAR: Emoji Reference -->
+    <!-- LEFT SIDEBAR -->
     <aside class="sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <span>🔣</span> Emoji Reference
-      </div>
+      <div class="sidebar-header"><span>🔣</span> Emoji Reference</div>
       <div class="sidebar-search">
         <input type="text" id="emoji-search" placeholder="Search emojis..." autocomplete="off" />
       </div>
-      <div class="emoji-list" id="emoji-list">
-        <!-- Populated by JS -->
-      </div>
+      <div class="emoji-list" id="emoji-list"></div>
     </aside>
 
-    <!-- CENTER: Code Editor -->
+    <!-- CENTER: Editor -->
     <section class="editor-panel">
+
       <div class="panel-header">
         <span class="panel-title">📝 main.emoji</span>
         <div class="editor-meta">
           <span id="line-count">0 lines</span>
           <span class="dot">·</span>
           <span id="char-count">0 chars</span>
+          <span class="dot">·</span>
+          <span class="question-label" id="question-label">No question selected</span>
         </div>
+      </div>
+
+      <!-- QUESTION INFO PANEL — shows current question description -->
+      <div class="question-info-panel" id="question-info-panel">
+        <div class="q-info-header">
+          <span class="q-info-id" id="q-info-id">Q1</span>
+          <span class="q-info-title" id="q-info-title">Question Title</span>
+          <span class="q-info-solved-badge hidden" id="q-info-solved">✅ SOLVED</span>
+        </div>
+        <div class="q-info-desc" id="q-info-desc">Question description here</div>
+        <div class="q-info-hint">💡 Hit <strong>Run</strong> to test your code, then <strong>Submit</strong> when confident</div>
       </div>
 
       <div class="editor-wrap">
@@ -74,21 +87,23 @@
           spellcheck="false"
           autocomplete="off"
           autocorrect="off"
-          placeholder="🖊️ Start coding with emojis...&#10;&#10;Try: 📢 &quot;Hello World&quot; 🔚"
+          placeholder="🖊️ Select a question above, then start coding..."
         ></textarea>
       </div>
 
-      <!-- CONVERTED PYTHON PREVIEW -->
-      <!-- <div class="python-preview" id="python-preview-panel">
-        <div class="preview-header">
-          <span>🐍 Python Preview</span>
-          <button class="toggle-preview" id="toggle-preview">▲ Hide</button>
+      <!-- PROGRESS TRACKER — bottom of editor -->
+      <div class="progress-tracker" id="progress-tracker">
+        <span class="progress-label">Progress:</span>
+        <div id="progress-chips"></div>
+        <div class="progress-summary">
+          <span class="solved-count" id="solved-count">0</span>
+          <span>/ <span id="total-count">0</span> solved</span>
         </div>
-        <pre class="python-code" id="python-output-preview"></pre>
-      </div> -->
+      </div>
+
     </section>
 
-    <!-- RIGHT PANEL: Output -->
+    <!-- RIGHT: Output -->
     <section class="output-panel">
       <div class="panel-header">
         <span class="panel-title">⚡ Output</span>
@@ -98,31 +113,30 @@
         <div class="output-welcome">
           <div class="welcome-icon">🚀</div>
           <div class="welcome-title">Ready to Run</div>
-          <div class="welcome-sub">Write emoji code on the left, hit <strong>Run Code</strong> to execute</div>
+          <div class="welcome-sub">Select a question above, write emoji code, hit <strong>Run</strong> to test, then <strong>Submit</strong> when ready</div>
         </div>
       </div>
     </section>
 
   </main>
 
-  <!-- DOCS PANEL (hidden by default) -->
+  <!-- DOCS PANEL -->
   <div class="docs-panel hidden" id="docs-panel">
-    <div class="docs-content" id="docs-content">
-      <!-- Populated by JS -->
-    </div>
+    <div class="docs-content" id="docs-content"></div>
   </div>
 
-  <!-- TOAST NOTIFICATIONS -->
+  <!-- TOAST -->
   <div class="toast-container" id="toast-container"></div>
 
-  <!-- SCRIPTS -->
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
   <script src="js/emojiMap.js"></script>
   <script src="js/compiler.js"></script>
   <script src="js/runner.js"></script>
   <script src="js/editor.js"></script>
   <script src="js/sidebar.js"></script>
   <script src="js/ui.js"></script>
+  <script src="js/participant.js"></script>
   <script src="js/app.js"></script>
-
 </body>
 </html>

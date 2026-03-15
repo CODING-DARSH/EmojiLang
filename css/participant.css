@@ -1,0 +1,160 @@
+/* ─── REGISTRATION OVERLAY ───────────────────────────── */
+.reg-overlay {
+  position: fixed; inset: 0;
+  background: rgba(8,8,16,0.95);
+  backdrop-filter: blur(12px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999;
+}
+.reg-overlay.hidden { display: none; }
+
+.reg-card {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: var(--radius-lg); padding: 40px; width: 420px;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+  animation: fadeIn 0.4s ease; position: relative;
+}
+.reg-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+.reg-logo { font-family: var(--font-display); font-size: 22px; font-weight: 900; color: var(--accent); margin-bottom: 16px; }
+.reg-title { font-family: var(--font-display); font-size: 28px; font-weight: 900; color: var(--text); margin-bottom: 6px; }
+.reg-sub { font-size: 12px; color: var(--muted); margin-bottom: 28px; }
+.reg-form { display: flex; flex-direction: column; gap: 16px; }
+.reg-field { display: flex; flex-direction: column; gap: 6px; }
+.reg-field label { font-size: 11px; font-weight: 700; color: var(--text2); letter-spacing: 1px; text-transform: uppercase; }
+.reg-field input {
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text); padding: 12px 14px; border-radius: var(--radius);
+  font-size: 14px; font-family: var(--font-mono); transition: border-color 0.2s;
+}
+.reg-field input:focus { border-color: var(--accent); outline: none; }
+.reg-field input::placeholder { color: var(--muted); }
+.reg-error { font-size: 12px; color: var(--red); min-height: 16px; font-weight: 700; }
+.reg-btn { width: 100%; justify-content: center; padding: 14px; font-size: 14px; margin-top: 4px; }
+
+/* ─── PARTICIPANT BADGE ──────────────────────────────── */
+.participant-badge {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; color: var(--text2);
+  background: var(--surface2); border: 1px solid var(--border);
+  padding: 6px 12px; border-radius: var(--radius);
+}
+.participant-badge .badge-name { font-weight: 700; color: var(--accent); }
+.participant-badge .badge-roll { color: var(--muted); }
+
+/* ─── QUESTION SELECTOR ──────────────────────────────── */
+.question-select {
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text); padding: 8px 12px; border-radius: var(--radius);
+  font-family: var(--font-mono); font-size: 12px; cursor: pointer;
+  transition: border-color 0.2s; max-width: 200px;
+}
+.question-select:focus { outline: none; border-color: var(--accent); }
+.question-select option { background: var(--surface2); }
+
+/* ─── QUESTION LABEL ─────────────────────────────────── */
+.question-label { color: var(--accent3); font-weight: 700; }
+
+/* ─── SUBMIT BUTTON ──────────────────────────────────── */
+.btn-submit {
+  background: var(--accent2); color: white;
+  box-shadow: 0 0 20px rgba(124,58,237,0.4); padding: 8px 20px;
+}
+.btn-submit:hover:not(:disabled) {
+  background: #9333ea; box-shadow: 0 0 32px rgba(124,58,237,0.6);
+  transform: translateY(-1px);
+}
+.btn-submit:disabled { background: var(--muted); box-shadow: none; cursor: not-allowed; opacity: 0.5; }
+.hidden { display: none !important; }
+/* ─── QUESTION INFO PANEL ────────────────────────────── */
+.question-info-panel {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 18px;
+  flex-shrink: 0;
+  display: none;
+  gap: 12px;
+  flex-direction: column;
+}
+.question-info-panel.visible { display: flex; }
+
+.q-info-header {
+  display: flex; align-items: center; gap: 10px;
+}
+.q-info-id {
+  font-family: var(--font-display); font-size: 13px; font-weight: 900;
+  color: var(--accent); background: var(--accent-dim, rgba(255,107,53,0.1));
+  border: 1px solid rgba(255,107,53,0.3); padding: 3px 10px; border-radius: 4px;
+}
+.q-info-title {
+  font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--text);
+}
+.q-info-solved-badge {
+  margin-left: auto; font-size: 11px; font-weight: 700;
+  color: var(--green); background: var(--green-dim);
+  border: 1px solid rgba(34,197,94,0.3); padding: 3px 10px; border-radius: 4px;
+}
+.q-info-desc {
+  font-size: 12px; color: var(--text2); line-height: 1.7;
+  background: var(--surface2); padding: 10px 14px;
+  border-radius: var(--radius); border-left: 3px solid var(--accent3);
+}
+.q-info-hint {
+  font-size: 11px; color: var(--muted);
+}
+.q-info-hint strong { color: var(--accent2); }
+
+/* ─── PROGRESS TRACKER ───────────────────────────────── */
+.progress-tracker {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 8px 16px;
+  display: flex; align-items: center; gap: 8px;
+  flex-shrink: 0; flex-wrap: wrap;
+}
+.progress-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--muted); margin-right: 4px;
+}
+.progress-chip {
+  font-size: 10px; font-weight: 700;
+  padding: 3px 8px; border-radius: 4px; cursor: pointer;
+  transition: all 0.2s; border: 1px solid transparent;
+  font-family: var(--font-mono);
+}
+.progress-chip.solved {
+  background: var(--green-dim); color: var(--green);
+  border-color: rgba(34,197,94,0.3);
+}
+.progress-chip.current {
+  background: rgba(255,107,53,0.15); color: var(--accent);
+  border-color: rgba(255,107,53,0.4);
+}
+.progress-chip.pending {
+  background: var(--surface2); color: var(--muted);
+  border-color: var(--border);
+}
+.progress-chip:hover { opacity: 0.8; }
+
+.progress-summary {
+  margin-left: auto; font-size: 11px; color: var(--muted);
+  display: flex; align-items: center; gap: 6px;
+}
+.progress-summary .solved-count { color: var(--green); font-weight: 700; }
+
+/* ─── SUBMIT RESULT ──────────────────────────────────── */
+.submit-result { margin: 12px; border-radius: var(--radius); overflow: hidden; animation: fadeIn 0.3s ease; }
+.submit-passed { background: var(--green-dim); border: 1px solid rgba(34,197,94,0.3); }
+.submit-failed { background: var(--red-dim); border: 1px solid rgba(239,68,68,0.25); }
+.submit-header { display: flex; align-items: center; gap: 10px; padding: 14px 16px; font-size: 14px; font-weight: 700; }
+.submit-passed .submit-header { color: var(--green); background: rgba(34,197,94,0.1); }
+.submit-failed .submit-header { color: var(--red); background: rgba(239,68,68,0.1); }
+.submit-body { padding: 14px 16px; }
+.submit-row { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+.submit-row:last-child { margin-bottom: 0; }
+.submit-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+.submit-value { font-size: 12px; color: var(--text); background: var(--surface2); padding: 8px 10px; border-radius: 4px; white-space: pre-wrap; word-break: break-word; }
+.submit-time { font-size: 11px; color: var(--muted); margin-left: auto; }

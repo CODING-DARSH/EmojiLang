@@ -1,0 +1,20 @@
+# Environment variables — NEVER push to GitHub
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+venv/
+env/
+
+# Data files — reset before each event
+submissions.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/

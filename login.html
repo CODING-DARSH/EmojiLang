@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hack & Crack — Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root{--bg:#080810;--surface:#0f0f1a;--surface2:#16162a;--border:#252538;--border2:#32324a;--accent:#3b82f6;--accent-dim:rgba(59,130,246,0.15);--accent2:#7c3aed;--accent3:#06b6d4;--green:#22c55e;--red:#ef4444;--yellow:#eab308;--text:#e2e8f0;--text2:#94a3b8;--muted:#475569;--font-mono:'Space Mono',monospace;--font-display:'Syne',sans-serif;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:var(--bg);color:var(--text);font-family:var(--font-mono);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+    body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(59,130,246,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
+    .orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;opacity:0.15;}
+    .orb-1{width:400px;height:400px;background:var(--accent);top:-100px;left:-100px;}
+    .orb-2{width:300px;height:300px;background:var(--accent2);bottom:-80px;right:-80px;}
+    .event-badge{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);background:var(--accent-dim);border:1px solid rgba(59,130,246,0.3);padding:6px 16px;border-radius:20px;margin-bottom:32px;}
+    .event-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 1.5s ease-in-out infinite;}
+    .card{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:48px;width:440px;position:relative;z-index:1;box-shadow:0 32px 80px rgba(0,0,0,0.5);animation:fadeIn 0.5s ease;}
+    .card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),var(--accent2),transparent);border-radius:16px 16px 0 0;}
+    .logo{font-family:var(--font-display);font-size:28px;font-weight:900;margin-bottom:6px;display:flex;align-items:center;gap:10px;}
+    .logo span{color:var(--accent);}
+    .subtitle{font-size:12px;color:var(--muted);margin-bottom:36px;}
+    .form{display:flex;flex-direction:column;gap:18px;}
+    .field{display:flex;flex-direction:column;gap:6px;}
+    .field label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text2);}
+    .field input{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:13px 16px;border-radius:8px;font-family:var(--font-mono);font-size:14px;transition:all 0.2s;outline:none;}
+    .field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,0.1);}
+    .field input::placeholder{color:var(--muted);}
+    .field input:disabled{opacity:0.5;cursor:not-allowed;}
+    .error-msg{font-size:12px;color:var(--red);font-weight:700;min-height:18px;line-height:1.5;}
+    .attempts-section{display:none;}
+    .attempts-label{font-size:10px;color:var(--muted);margin-bottom:6px;}
+    .attempts-bar{display:flex;gap:6px;}
+    .attempt-dot{width:10px;height:10px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);transition:all 0.3s;}
+    .attempt-dot.used{background:var(--red);border-color:var(--red);}
+    .attempt-dot.warn{background:var(--yellow);border-color:var(--yellow);animation:pulse 1s infinite;}
+    .btn-login{background:var(--accent);color:white;border:none;padding:14px;border-radius:8px;font-family:var(--font-mono);font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:4px;box-shadow:0 0 20px rgba(59,130,246,0.3);width:100%;}
+    .btn-login:hover:not(:disabled){background:#2563eb;transform:translateY(-1px);}
+    .btn-login:disabled{background:var(--muted);box-shadow:none;transform:none;cursor:not-allowed;}
+    .locked-panel{display:none;text-align:center;padding:24px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:10px;}
+    .locked-panel.visible{display:block;}
+    .locked-icon{font-size:40px;margin-bottom:12px;}
+    .locked-title{font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--red);margin-bottom:6px;}
+    .locked-sub{font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6;}
+    .locked-reason{font-size:11px;color:var(--red);background:rgba(239,68,68,0.1);padding:6px 12px;border-radius:6px;margin-bottom:16px;border:1px solid rgba(239,68,68,0.2);}
+    .btn-request{background:var(--yellow);color:#000;border:none;padding:10px 20px;border-radius:8px;font-family:var(--font-mono);font-size:12px;font-weight:700;cursor:pointer;width:100%;margin-bottom:8px;}
+    .btn-request:disabled{opacity:0.5;cursor:not-allowed;}
+    .request-sent{font-size:11px;color:var(--yellow);display:none;margin-top:8px;line-height:1.6;}
+    .request-sent.visible{display:block;}
+    .polling-text{color:var(--muted);margin-top:4px;animation:pulse 2s infinite;}
+    .footer-note{text-align:center;font-size:11px;color:var(--muted);margin-top:20px;}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+    .shake{animation:shake 0.4s ease;}
+  </style>
+</head>
+<body>
+  <script src="js/config.js"></script>
+
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <div class="event-badge"><div class="event-dot"></div> Round 2 — Coding Challenge</div>
+
+  <div class="card" id="main-card">
+    <div class="logo">⚔️ Hack &amp; <span>Crack</span></div>
+    <div class="subtitle">Enter your team credentials to join the challenge</div>
+
+    <!-- LOGIN FORM -->
+    <div class="form" id="login-form">
+      <div class="field">
+        <label>Team Name</label>
+        <input type="text" id="team" placeholder="Enter team name" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="password" placeholder="Enter your password" />
+      </div>
+      <div class="attempts-section" id="attempts-section">
+        <div class="attempts-label">Login attempts remaining:</div>
+        <div class="attempts-bar">
+          <div class="attempt-dot" id="dot-1"></div>
+          <div class="attempt-dot" id="dot-2"></div>
+          <div class="attempt-dot" id="dot-3"></div>
+        </div>
+      </div>
+      <div class="error-msg" id="error-msg"></div>
+      <button class="btn-login" id="btn-login">Login &amp; Join →</button>
+    </div>
+
+    <!-- LOCKED PANEL -->
+    <div class="locked-panel" id="locked-panel">
+      <div class="locked-icon" id="locked-icon">🔒</div>
+      <div class="locked-title" id="locked-title">Account Locked</div>
+      <div class="locked-reason" id="locked-reason"></div>
+      <div class="locked-sub">Please request the admin to unlock your account.</div>
+      <button class="btn-request" id="btn-request">📩 Request Admin Unlock</button>
+      <div class="request-sent" id="request-sent">
+        ✅ Unlock request sent to admin!
+        <div class="polling-text">Waiting for admin approval... checking every 3s</div>
+      </div>
+    </div>
+
+    <div class="footer-note">Contact the organizer if you have login issues</div>
+  </div>
+
+<script>
+  // Always clear session on login page
+  localStorage.removeItem('hc_session');
+
+  const rollEl = document.getElementById('team');
+  const passEl   = document.getElementById('password');
+  const btnEl    = document.getElementById('btn-login');
+  const errEl    = document.getElementById('error-msg');
+  let   pollTimer = null;
+  let   failedAttempts = 0;
+
+  // ── CHECK IF ROLL IS LOCKED (tab violations or failed attempts) ──
+  rollEl.addEventListener('blur', async () => {
+    const roll = rollEl.value.trim();
+    if (!roll) return;
+    await checkIfLocked(roll);
+  });
+
+  async function checkIfLocked(roll) {
+    // Check tab violations in Supabase
+    const tabData = await HC_CONFIG.sbFetch(
+      `tab_violations?roll_number=eq.${encodeURIComponent(roll)}&select=*`
+    );
+    if (tabData && tabData.length && tabData[0].is_locked) {
+      showLocked(roll, 'tab_switching', tabData[0]);
+      return true;
+    }
+
+    // Check backend failed attempts
+    const res  = await fetch(`${HC_CONFIG.BASE_URL}/login/status`, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ roll })
+    });
+    const data = await res.json();
+    if (data.locked) {
+      showLocked(roll, 'wrong_password', null);
+      return true;
+    }
+    if (data.attempts > 0) showAttemptDots(data.attempts);
+    return false;
+  }
+
+  function showAttemptDots(used) {
+    document.getElementById('attempts-section').style.display = 'block';
+    [1,2,3].forEach(i => {
+      const dot = document.getElementById(`dot-${i}`);
+      dot.className = 'attempt-dot';
+      if (i <= used) dot.classList.add('used');
+      if (i === used + 1 && used < 3) dot.classList.add('warn');
+    });
+  }
+
+  function showLocked(roll, reason, tabInfo) {
+    document.getElementById('login-form').style.display   = 'none';
+    document.getElementById('locked-panel').classList.add('visible');
+
+    const icon    = document.getElementById('locked-icon');
+    const title   = document.getElementById('locked-title');
+    const reasonEl = document.getElementById('locked-reason');
+
+    if (reason === 'tab_switching') {
+      icon.textContent  = '👁️🔒';
+      title.textContent = 'Locked — Tab Switching';
+      reasonEl.textContent = `Reason: Switched tabs ${tabInfo ? tabInfo.switch_count : 3} times during the challenge`;
+    } else {
+      icon.textContent  = '🔒';
+      title.textContent = 'Account Locked';
+      reasonEl.textContent = 'Reason: Too many failed login attempts';
+    }
+
+    // Check if already requested unlock
+    checkUnlockStatus(roll);
+  }
+
+  async function checkUnlockStatus(roll) {
+    // Check Supabase unlock_requests
+    const data = await HC_CONFIG.sbFetch(
+      `unlock_requests?roll_number=eq.${encodeURIComponent(roll)}&order=requested_at.desc&limit=1&select=*`
+    );
+    if (data && data.length) {
+      if (data[0].status === 'approved') {
+        // Already approved — show form again
+        onUnlockApproved();
+        return;
+      }
+      if (data[0].status === 'pending') {
+        // Already requested
+        document.getElementById('btn-request').disabled = true;
+        document.getElementById('request-sent').classList.add('visible');
+        startPolling(roll);
+        return;
+      }
+    }
+  }
+
+  // Request unlock
+  document.getElementById('btn-request').addEventListener('click', async () => {
+    const roll = rollEl.value.trim();
+    if (!roll) { alert('Enter your roll number first'); return; }
+
+    document.getElementById('btn-request').disabled = true;
+
+    // Get team name
+    const teams = await HC_CONFIG.sbFetch(
+      `teams?team_name=eq.${encodeURIComponent(roll)}`
+    );
+    const teamName = teams && teams.length ? teams[0].team_name : roll;
+
+    // Check if unlock request already exists
+    const existing = await HC_CONFIG.sbFetch(
+      `unlock_requests?roll_number=eq.${encodeURIComponent(roll)}&status=eq.pending&select=id`
+    );
+
+    if (!existing || !existing.length) {
+      // Create new unlock request in Supabase
+      await HC_CONFIG.sbFetch('unlock_requests', 'POST', {
+        roll_number:  roll,
+        team_name:    teamName,
+        reason:       'wrong_password',
+        status:       'pending',
+      });
+    }
+
+    document.getElementById('request-sent').classList.add('visible');
+    startPolling(roll);
+  });
+
+  function startPolling(roll) {
+    if (pollTimer) clearInterval(pollTimer);
+    pollTimer = setInterval(async () => {
+      const data = await HC_CONFIG.sbFetch(
+        `unlock_requests?roll_number=eq.${encodeURIComponent(roll)}&order=requested_at.desc&limit=1&select=status`
+      );
+      if (data && data.length && data[0].status === 'approved') {
+        clearInterval(pollTimer);
+        onUnlockApproved();
+      }
+    }, 3000);
+  }
+
+  function onUnlockApproved() {
+    document.getElementById('locked-panel').classList.remove('visible');
+    document.getElementById('login-form').style.display = 'flex';
+    document.getElementById('attempts-section').style.display = 'none';
+    document.getElementById('btn-request').disabled = false;
+    document.getElementById('request-sent').classList.remove('visible');
+    errEl.textContent = '✅ Account unlocked! You can login now.';
+    errEl.style.color = 'var(--green)';
+  }
+
+  // ── LOGIN ────────────────────────────────────────────────────────
+  async function login() {
+    const roll     = rollEl.value.trim();
+    const password = passEl.value.trim();
+    if (!roll || !password) { errEl.textContent = '⚠️ Please enter both fields'; return; }
+
+    // Check locked before attempting
+    const locked = await checkIfLocked(roll);
+    if (locked) return;
+
+    btnEl.disabled    = true;
+    btnEl.textContent = 'Logging in...';
+    errEl.textContent = '';
+    errEl.style.color = 'var(--red)';
+
+    try {
+      const teams = await HC_CONFIG.sbFetch(
+        `teams?team_name=eq.${encodeURIComponent(roll)}`
+      );
+      const isValid = teams && teams.length && teams[0].password === password;
+
+      if (!isValid) {
+        // Record failed attempt in backend
+        const res  = await fetch(`${HC_CONFIG.BASE_URL}/login/attempt`, {
+          method: 'POST', headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ roll })
+        });
+        const data = await res.json();
+
+        if (data.locked) {
+          showLocked(roll, 'wrong_password', null);
+          return;
+        }
+
+        failedAttempts = data.attempts;
+        showAttemptDots(data.attempts);
+        document.getElementById('main-card').classList.add('shake');
+        setTimeout(() => document.getElementById('main-card').classList.remove('shake'), 400);
+
+        errEl.textContent = !teams || !teams.length
+          ? `❌ Team not found — ${data.remaining} attempt${data.remaining !== 1 ? 's' : ''} left`
+          : `❌ Wrong password — ${data.remaining} attempt${data.remaining !== 1 ? 's' : ''} left`;
+
+        btnEl.disabled    = false;
+        btnEl.textContent = 'Login & Join →';
+        return;
+      }
+
+      // Check already logged in
+      const active = await HC_CONFIG.sbFetch(
+        `sessions?roll_number=eq.${encodeURIComponent(roll)}&is_active=eq.true&select=id`
+      );
+      if (active && active.length > 0) {
+        errEl.textContent = '❌ Already logged in on another device';
+        btnEl.disabled    = false;
+        btnEl.textContent = 'Login & Join →';
+        return;
+      }
+
+      // Clear failed attempts
+      await fetch(`${HC_CONFIG.BASE_URL}/login/success`, {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ roll })
+      });
+
+      // Create session in Supabase
+      const sessionId = crypto.randomUUID();
+      await HC_CONFIG.sbFetch('sessions', 'POST', {
+        id:            sessionId,
+        roll_number:   roll,
+        team_name:     teams[0].team_name,
+        device_info:   navigator.userAgent.substring(0, 100),
+        is_active:     true,
+        logged_in_at:  new Date().toISOString(),
+        last_activity: new Date().toISOString(),
+      });
+
+      localStorage.setItem('hc_session', JSON.stringify({
+        sessionId, roll, name: teams[0].team_name
+      }));
+
+      window.location.href = '/waiting.html';
+
+    } catch(e) {
+      errEl.textContent = '❌ Connection error — try again';
+      btnEl.disabled    = false;
+      btnEl.textContent = 'Login & Join →';
+    }
+  }
+
+  btnEl.addEventListener('click', login);
+  passEl.addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+  rollEl.addEventListener('keydown', e => { if (e.key === 'Enter') passEl.focus(); });
+</script>
+</body>
+</html>

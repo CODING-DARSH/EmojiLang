@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hack & Crack — Waiting</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root{--bg:#080810;--surface:#0f0f1a;--surface2:#16162a;--border:#252538;--border2:#32324a;--accent:#3b82f6;--accent-dim:rgba(59,130,246,0.15);--accent2:#7c3aed;--accent3:#06b6d4;--green:#22c55e;--red:#ef4444;--yellow:#eab308;--text:#e2e8f0;--text2:#94a3b8;--muted:#475569;--font-mono:'Space Mono',monospace;--font-display:'Syne',sans-serif;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:var(--bg);color:var(--text);font-family:var(--font-mono);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;position:relative;}
+    body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(59,130,246,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
+    .orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;opacity:0.12;}
+    .orb-1{width:500px;height:500px;background:var(--accent);top:-150px;right:-150px;}
+    .orb-2{width:400px;height:400px;background:var(--accent2);bottom:-100px;left:-100px;}
+    .content{text-align:center;z-index:1;max-width:600px;padding:40px;animation:fadeIn 0.6s ease;}
+    .team-badge{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--accent);font-weight:700;background:var(--accent-dim);border:1px solid rgba(59,130,246,0.3);padding:6px 16px;border-radius:20px;margin-bottom:32px;}
+    .waiting-icon{font-size:72px;margin-bottom:24px;animation:float 3s ease-in-out infinite;}
+    .title{font-family:var(--font-display);font-size:42px;font-weight:900;margin-bottom:12px;line-height:1.1;}
+    .title span{color:var(--accent);}
+    .message{font-size:14px;color:var(--text2);margin-bottom:40px;line-height:1.7;max-width:400px;margin-left:auto;margin-right:auto;}
+    .waiting-dots{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:40px;}
+    .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);animation:dotPulse 1.4s ease-in-out infinite;}
+    .dot:nth-child(2){animation-delay:0.2s;background:var(--accent2);}
+    .dot:nth-child(3){animation-delay:0.4s;background:var(--accent3);}
+    .status-card{background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:20px 32px;display:inline-flex;align-items:center;gap:12px;margin-bottom:32px;}
+    .status-indicator{width:10px;height:10px;border-radius:50%;background:var(--yellow);animation:pulse 1.5s ease-in-out infinite;}
+    .status-indicator.released{background:var(--green);animation:none;}
+    .status-text{font-size:13px;font-weight:700;color:var(--text2);}
+    .btn-logout{font-family:var(--font-mono);font-size:11px;color:var(--muted);background:none;border:1px solid var(--border);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all 0.2s;margin-top:16px;}
+    .btn-logout:hover{color:var(--red);border-color:var(--red);}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+    @keyframes dotPulse{0%,100%{transform:scale(1);opacity:0.5}50%{transform:scale(1.4);opacity:1}}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  </style>
+</head>
+<body>
+  <script src="js/config.js"></script>
+
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <div class="content">
+    <div class="team-badge" id="team-badge">👤 Loading...</div>
+    <div class="waiting-icon">⏳</div>
+    <div class="title">Get Ready to<br /><span>Hack & Crack</span></div>
+    <div class="message" id="wait-message">The round hasn't started yet. Stay on this page — you'll be automatically redirected when the admin releases the round.</div>
+    <div class="waiting-dots">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+    <div class="status-card">
+      <div class="status-indicator" id="status-indicator"></div>
+      <div class="status-text" id="status-text">Waiting for admin to release round...</div>
+    </div>
+    <br />
+    <button class="btn-logout" id="btn-logout">← Logout</button>
+  </div>
+
+<script>
+  const session = JSON.parse(localStorage.getItem('hc_session') || 'null');
+  if (!session) window.location.href = '/login.html';
+
+  document.getElementById('team-badge').textContent = `👤 ${session.name} — ${session.roll}`;
+
+  async function updateActivity() {
+    await HC_CONFIG.sbFetch(`sessions?id=eq.${session.sessionId}`, 'PATCH', {
+      last_activity: new Date().toISOString()
+    });
+  }
+
+  async function checkStatus() {
+    try {
+      // Check session still active
+      const sessData = await HC_CONFIG.sbFetch(`sessions?id=eq.${session.sessionId}&select=is_active`);
+      if (!sessData || !sessData.length || !sessData[0].is_active) {
+        localStorage.removeItem('hc_session');
+        alert('Your session was disconnected by the admin.');
+        window.location.href = '/login.html';
+        return;
+      }
+
+      // Check round released
+      const roundData = await HC_CONFIG.sbFetch('round_control?id=eq.1&select=*');
+      if (roundData && roundData.length) {
+        const round = roundData[0];
+        if (round.message) document.getElementById('wait-message').textContent = round.message;
+        if (round.round_released) {
+          document.getElementById('status-indicator').classList.add('released');
+          document.getElementById('status-text').textContent = '🚀 Round released! Redirecting...';
+          setTimeout(() => {
+            window.location.href = `/index.html`;
+          }, 1500);
+          return;
+        }
+      }
+
+      updateActivity();
+    } catch(e) { console.error(e); }
+  }
+
+  document.getElementById('btn-logout').addEventListener('click', async () => {
+    if (!confirm('Are you sure you want to logout?')) return;
+    await HC_CONFIG.sbFetch(`sessions?id=eq.${session.sessionId}`, 'PATCH', { is_active: false });
+    localStorage.removeItem('hc_session');
+    window.location.href = '/login.html';
+  });
+
+  checkStatus();
+  setInterval(checkStatus, 3000);
+</script>
+</body>
+</html>

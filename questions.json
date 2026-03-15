@@ -1,0 +1,52 @@
+{
+  "Q1": {
+    "title": "Hello World",
+    "description": "Print exactly: Hello World",
+    "expected": "Hello World"
+  },
+  "Q2": {
+    "title": "Sum of 1 to 10",
+    "description": "Print the sum of all numbers from 1 to 10 (inclusive).",
+    "expected": "55"
+  },
+  "Q3": {
+    "title": "Even or Odd",
+    "description": "Print whether 42 is Even or Odd. Print exactly: Even or Odd",
+    "expected": "Even"
+  },
+  "Q4": {
+    "title": "Factorial",
+    "description": "Print the factorial of 6.",
+    "expected": "720"
+  },
+  "Q5": {
+    "title": "FizzBuzz",
+    "description": "Print FizzBuzz from 1 to 15. Print Fizz for multiples of 3, Buzz for multiples of 5, FizzBuzz for both.",
+    "expected": "1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz"
+  },
+  "Q6": {
+    "title": "Reverse a String",
+    "description": "Print the reverse of the string: hello",
+    "expected": "olleh"
+  },
+  "Q7": {
+    "title": "Count Vowels",
+    "description": "Print the number of vowels in: programming",
+    "expected": "3"
+  },
+  "Q8": {
+    "title": "Fibonacci",
+    "description": "Print the first 8 Fibonacci numbers, one per line. Start from 0.",
+    "expected": "0\n1\n1\n2\n3\n5\n8\n13"
+  },
+  "Q9": {
+    "title": "Prime Check",
+    "description": "Print all prime numbers from 1 to 20, one per line.",
+    "expected": "2\n3\n5\n7\n11\n13\n17\n19"
+  },
+  "Q10": {
+    "title": "List Sum & Average",
+    "description": "Given list [10, 20, 30, 40, 50], print the sum on first line and average on second line.",
+    "expected": "150\n30.0"
+  }
+}
