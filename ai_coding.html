@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI First: Neural IDE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+    
+    <style>
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: #030712;
+            color: #00d8ff;
+            overflow: hidden;
+            letter-spacing: 0.05em;
+        }
+
+        .code-font {
+            font-family: 'Space Mono', monospace;
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0b1120; }
+        ::-webkit-scrollbar-thumb { background: #00d8ff; border-radius: 3px; }
+
+        .neon-text { text-shadow: 0 0 8px #00d8ff, 0 0 16px rgba(0, 216, 255, 0.5); }
+        .neon-border { box-shadow: 0 0 12px rgba(0, 216, 255, 0.1) inset, 0 0 10px rgba(0, 216, 255, 0.2); border: 1px solid rgba(0, 216, 255, 0.4); }
+        
+        .panel { 
+            background-color: rgba(15, 23, 42, 0.85); 
+            backdrop-filter: blur(8px); 
+        }
+
+        .editor-container {
+            display: flex;
+            height: calc(100% - 40px);
+            background: #0b1120;
+            border-radius: 0 0 0.5rem 0.5rem;
+            position: relative;
+        }
+
+        .line-numbers {
+            padding: 1rem 0.5rem;
+            text-align: right;
+            color: #475569;
+            background: #0f172a;
+            user-select: none;
+            border-right: 1px solid #1e293b;
+            min-width: 3rem;
+        }
+
+        textarea.code-editor, textarea.scratchpad {
+            flex: 1;
+            background: transparent;
+            color: #e2e8f0;
+            padding: 1rem;
+            outline: none;
+            resize: none;
+            border: none;
+            line-height: 1.5;
+            white-space: pre;
+            overflow-wrap: normal;
+            overflow-x: auto;
+        }
+
+        textarea.scratchpad {
+            white-space: pre-wrap;
+            color: #a5b4fc;
+        }
+
+        textarea.code-editor::placeholder, textarea.scratchpad::placeholder {
+            color: #334155;
+            font-style: italic;
+        }
+        
+        /* Tab active state */
+        .tab-active {
+            background: rgba(0, 216, 255, 0.1);
+            border-bottom: 2px solid #00d8ff;
+            color: #00d8ff;
+        }
+        .tab-inactive {
+            color: #64748b;
+            border-bottom: 2px solid transparent;
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col p-4">
+
+    <!-- HEADER -->
+    <header class="flex justify-between items-center mb-4 border-b border-cyan-800 pb-3 shrink-0">
+        <div class="flex items-center gap-4">
+            <div class="text-3xl font-bold neon-text uppercase tracking-widest flex items-center gap-2">
+                <span class="text-purple-400">🧠</span> AI FIRST: <span class="text-cyan-200">Neural Editor</span>
+            </div>
+            <span class="px-2 py-1 text-xs font-bold bg-cyan-900/50 border border-cyan-700 rounded text-cyan-300">STANDARD SYNTAX MODE</span>
+        </div>
+        
+        <div class="flex gap-3">
+            <button onclick="clearEditor()" class="flex items-center gap-2 px-4 py-2 text-sm font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 rounded transition-colors">
+                🗑️ WIPE MEMORY
+            </button>
+            <button onclick="copyPayload()" class="flex items-center gap-2 px-8 py-2 text-sm font-bold bg-cyan-900/80 hover:bg-cyan-600 text-white border border-cyan-400 rounded transition-all neon-border shadow-[0_0_15px_rgba(0,216,255,0.3)] tracking-wider">
+                📋 COPY PAYLOAD FOR EVALUATION
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN WORKSPACE -->
+    <main class="flex-1 flex gap-4 min-h-0">
+
+        <!-- LEFT SIDEBAR: Scratchpad / Copilot Tabs (30%) -->
+        <aside class="w-[30%] panel neon-border flex flex-col rounded-lg overflow-hidden shrink-0">
+            <!-- Tabs -->
+            <div class="flex bg-slate-900/80 border-b border-cyan-800 font-bold uppercase tracking-wider text-xs cursor-pointer select-none">
+                <div id="tab-scratch" onclick="switchTab('scratch')" class="flex-1 p-3 text-center transition-colors tab-active">
+                    <span class="text-purple-400 mr-1">🕵️</span> SCRATCHPAD
+                </div>
+                <div id="tab-copilot" onclick="switchTab('copilot')" class="flex-1 p-3 text-center transition-colors tab-inactive">
+                    <span class="text-cyan-400 mr-1">🤖</span> NEURAL COPILOT
+                </div>
+            </div>
+            
+            <!-- Tab Content: Scratchpad -->
+            <div id="content-scratch" class="flex-1 flex flex-col bg-[#050810]">
+                <textarea
+                    class="scratchpad code-font text-sm p-4 w-full h-full"
+                    placeholder="Use this space to decode the emojis flashed on the main screen...&#10;&#10;e.g., 🚂 🚃 ➡️ 🛤️ 💰&#10;Looks like a train moving over a track... Sliding Window?"
+                ></textarea>
+            </div>
+            
+            <!-- Tab Content: Neural Copilot -->
+            <div id="content-copilot" class="hidden flex-1 flex flex-col bg-[#050810]">
+                <div id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-4 code-font text-xs">
+                    <!-- Initial AI Message -->
+                    <div class="chat-bubble-ai p-3 rounded-lg text-purple-300">
+                        <div class="font-bold text-purple-400 mb-1 font-sans uppercase tracking-widest">SYSTEM.COPILOT</div>
+                        Neural uplink established. I am restricted from writing full algorithmic solutions, but I can analyze your code for syntax errors, logical bottlenecks, and provide hints. How can I assist?
+                    </div>
+                </div>
+                
+                <!-- Chat Input Area -->
+                <div class="p-3 bg-slate-900/80 border-t border-cyan-800 flex gap-2">
+                    <textarea 
+                        id="chat-input" 
+                        rows="2" 
+                        class="flex-1 bg-slate-900 border border-cyan-700 text-cyan-300 rounded p-2 text-xs code-font outline-none focus:border-cyan-400 resize-none"
+                        placeholder="Ask for a hint or debugging help... (Shift+Enter for newline, Enter to send)"
+                        onkeydown="handleChatKeydown(event)"
+                    ></textarea>
+                    <button id="send-btn" onclick="sendChatMessage()" class="bg-cyan-900/80 hover:bg-cyan-600 text-white p-2 rounded border border-cyan-400 transition-colors flex items-center justify-center shrink-0">
+                        <span class="text-xl">➤</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- CENTER: Code Editor (70%) -->
+        <section class="flex-1 flex flex-col panel neon-border rounded-lg overflow-hidden min-w-0">
+            <div class="bg-cyan-900/30 p-3 border-b border-cyan-800 flex justify-between items-center font-bold uppercase tracking-wider text-sm">
+                <div class="flex items-center gap-2">
+                    <span class="text-cyan-400">📝</span> SOURCE_CODE.TXT
+                </div>
+                <div class="flex items-center gap-4">
+                    <select id="lang-select" class="bg-slate-900 border border-cyan-700 text-cyan-400 px-2 py-1 text-xs rounded outline-none">
+                        <option value="python">Python</option>
+                        <option value="cpp">C++</option>
+                        <option value="java">Java</option>
+                        <option value="javascript">JavaScript</option>
+                    </select>
+                    <div class="text-xs text-cyan-500 font-mono tracking-normal" id="editor-meta">
+                        Ln 1 · Ch 0
+                    </div>
+                </div>
+            </div>
+
+            <div class="editor-container">
+                <div class="line-numbers code-font text-sm" id="line-numbers">1</div>
+                <textarea
+                    id="code-editor"
+                    class="code-editor code-font text-sm"
+                    spellcheck="false"
+                    oninput="updateEditor()"
+                    onscroll="syncScroll()"
+                    placeholder="# Establish neural link...&#10;# Write your algorithm here based on the decoded emojis.&#10;&#10;def solve_module(data):&#10;    pass"
+                ></textarea>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- SCRIPTS -->
+    <script>
+        // --- GROQ API INTEGRATION (KEY ROTATION) ---
+        // Replace these placeholders with actual free keys generated by your core team
+        const groqApiKeys = [
+            "gsk_your_key_1_here",
+            "gsk_your_key_2_here",
+            "gsk_your_key_3_here",
+            "gsk_your_key_4_here"
+        ];
+
+        // --- INITIALIZATION ---
+        const editor = document.getElementById('code-editor');
+        const lineNumbers = document.getElementById('line-numbers');
+        const meta = document.getElementById('editor-meta');
+        
+        // --- TAB LOGIC ---
+        function switchTab(tabName) {
+            const tabScratch = document.getElementById('tab-scratch');
+            const tabCopilot = document.getElementById('tab-copilot');
+            const contentScratch = document.getElementById('content-scratch');
+            const contentCopilot = document.getElementById('content-copilot');
+            
+            if (tabName === 'scratch') {
+                tabScratch.className = "flex-1 p-3 text-center transition-colors tab-active";
+                tabCopilot.className = "flex-1 p-3 text-center transition-colors tab-inactive";
+                contentScratch.classList.remove('hidden');
+                contentCopilot.classList.add('hidden');
+            } else {
+                tabScratch.className = "flex-1 p-3 text-center transition-colors tab-inactive";
+                tabCopilot.className = "flex-1 p-3 text-center transition-colors tab-active";
+                contentScratch.classList.add('hidden');
+                contentCopilot.classList.remove('hidden');
+            }
+        }
+
+        // --- EDITOR LOGIC ---
+        function updateEditor() {
+            const lines = editor.value.split('\n').length;
+            lineNumbers.innerHTML = Array(lines).fill(0).map((_, i) => i + 1).join('<br/>');
+            const charCount = editor.value.length;
+            meta.innerText = `Ln ${lines} · Ch ${charCount}`;
+        }
+
+        function syncScroll() {
+            lineNumbers.scrollTop = editor.scrollTop;
+        }
+
+        function clearEditor() {
+            if(confirm("Are you sure you want to wipe the current code payload?")) {
+                editor.value = '';
+                updateEditor();
+            }
+        }
+
+        function copyPayload() {
+            const code = editor.value.trim();
+            if (!code) {
+                alert("Payload is empty! Write some code first.");
+                return;
+            }
+
+            editor.select();
+            document.execCommand("copy");
+            
+            const btn = event.currentTarget;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = "✅ PAYLOAD COPIED!";
+            btn.classList.add('bg-green-600', 'border-green-400', 'text-white');
+            btn.classList.remove('bg-cyan-900/80', 'border-cyan-400');
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.classList.remove('bg-green-600', 'border-green-400', 'text-white');
+                btn.classList.add('bg-cyan-900/80', 'border-cyan-400');
+            }, 2000);
+        }
+
+        editor.addEventListener('keydown', function(e) {
+            if (e.key == 'Tab') {
+                e.preventDefault();
+                const start = this.selectionStart;
+                const end = this.selectionEnd;
+                this.value = this.value.substring(0, start) + "    " + this.value.substring(end);
+                this.selectionStart = this.selectionEnd = start + 4;
+            }
+        });
+
+        // --- NEURAL COPILOT LOGIC (AI AGENT) ---
+        let chatContext = []; // Stores conversation history
+        
+        const systemInstruction = `
+        You are 'Neural Copilot', an AI assistant integrated into a competitive programming IDE for 1st and 2nd-year CS students at an 'AI First' club event.
+        The event is called 'Operation: System Override' with a cyberpunk/hacker theme.
+        
+        CRITICAL GUARDRAILS:
+        1. YOU MUST NEVER GIVE THE COMPLETE CODE SOLUTION. Do not write full loops, full algorithms, or complete functions.
+        2. If they ask for the solution, politely refuse and offer a conceptual hint instead.
+        3. You may provide short (1-2 line) syntax snippets if they are struggling with language-specific syntax (e.g., how to declare a dictionary in Python).
+        4. Focus on Socratic teaching: ask them guiding questions to help them realize the logic flaw.
+        5. Speak in a slightly robotic, helpful, 'system AI' persona (e.g., use phrases like "Scanning logic...", "Anomaly detected in loop boundary").
+        
+        You have access to their current code in the editor when they ask questions.
+        `;
+
+        function handleChatKeydown(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendChatMessage();
+            }
+        }
+
+        function appendMessage(role, text) {
+            const history = document.getElementById('chat-history');
+            const isUser = role === 'user';
+            
+            const bubble = document.createElement('div');
+            bubble.className = isUser ? 'chat-bubble-user p-3 rounded-lg text-cyan-200' : 'chat-bubble-ai p-3 rounded-lg text-purple-200';
+            
+            const sender = isUser ? 'STUDENT_NODE' : 'SYSTEM.COPILOT';
+            const color = isUser ? 'text-cyan-400' : 'text-purple-400';
+            
+            // Basic markdown parsing for code blocks
+            let formattedText = text.replace(/`([^`]+)`/g, '<span class="bg-slate-900 text-cyan-300 px-1 rounded">$1</span>');
+            
+            bubble.innerHTML = `
+                <div class="font-bold ${color} mb-1 font-sans uppercase tracking-widest text-[10px]">${sender}</div>
+                ${formattedText}
+            `;
+            
+            history.appendChild(bubble);
+            history.scrollTop = history.scrollHeight;
+        }
+
+        async function sendChatMessage() {
+            const inputEl = document.getElementById('chat-input');
+            const message = inputEl.value.trim();
+            const btn = document.getElementById('send-btn');
+            
+            if (!message) return;
+            
+            // Clear input and append user message
+            inputEl.value = '';
+            appendMessage('user', message);
+            
+            // Build Context Payload
+            const currentCode = editor.value;
+            const language = document.getElementById('lang-select').value;
+            
+            const userContextPrompt = `
+            Student Message: ${message}
+            
+            --- Student's Current Code (${language}) ---
+            ${currentCode || "(Editor is currently empty)"}
+            ------------------------------------------
+            `;
+            
+            // Groq uses the standard "content" string rather than the "parts" array
+            chatContext.push({ role: "user", content: userContextPrompt });
+            
+            // UI Loading state
+            btn.disabled = true;
+            btn.innerHTML = '...';
+            
+            try {
+                // Select a random key to avoid per-minute rate limits
+                const randomKey = groqApiKeys[Math.floor(Math.random() * groqApiKeys.length)];
+                
+                if (!randomKey || randomKey.includes("your_key_1")) {
+                    throw new Error("Groq API keys not configured.");
+                }
+
+                const url = 'https://api.groq.com/openai/v1/chat/completions';
+                
+                const messagesPayload = [
+                    { role: "system", content: systemInstruction },
+                    ...chatContext
+                ];
+
+                const payload = {
+                    model: "llama-3.1-8b-instant", // Blazing fast model perfect for quick hints
+                    messages: messagesPayload,
+                    temperature: 0.3, // Low temp prevents the AI from hallucinating weird algorithms
+                    max_tokens: 250 // Strictly caps response length to prevent it from dumping full solutions
+                };
+                
+                // Exponential Backoff Fetch
+                let response, result;
+                const delays = [1000, 2000, 4000];
+                for (let i = 0; i < delays.length; i++) {
+                    try {
+                        response = await fetch(url, {
+                            method: 'POST',
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${randomKey}`
+                            },
+                            body: JSON.stringify(payload)
+                        });
+                        
+                        if (!response.ok) {
+                            const errData = await response.text();
+                            throw new Error(`HTTP Error ${response.status}: ${errData}`);
+                        }
+                        
+                        result = await response.json();
+                        break; // Success
+                    } catch (e) {
+                        if (i === delays.length - 1) throw e;
+                        await new Promise(res => setTimeout(res, delays[i]));
+                    }
+                }
+
+                const aiText = result.choices?.[0]?.message?.content;
+                if (!aiText) throw new Error("Empty AI response");
+                
+                // Append AI Response
+                appendMessage('model', aiText);
+                chatContext.push({ role: "assistant", content: aiText });
+                
+            } catch (error) {
+                console.error("Copilot Error:", error);
+                appendMessage('model', "⚠️ Uplink failed. The neural copilot is temporarily offline. Please check console or try again.");
+                // Remove the failed user prompt from context to prevent corruption
+                chatContext.pop(); 
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span class="text-xl">➤</span>';
+            }
+        }
+
+        // Init
+        updateEditor();
+    </script>
+</body>
+</html>

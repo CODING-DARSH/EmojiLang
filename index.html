@@ -31,10 +31,14 @@
       </nav>
     </div>
     <div class="topbar-right">
+<<<<<<< HEAD
       <div class="participant-badge" id="participant-badge"></div>
       <select class="question-select" id="question-select">
         <option value="">Select Question...</option>
       </select>
+=======
+      <button class="btn btn-ghost" id="btn-display">🖥️ Display</button>
+>>>>>>> f5da7e110be300249f54d955627ebfcc15bf175f
       <button class="btn btn-ghost" id="btn-clear">🗑️ Clear</button>
       <button class="btn btn-ghost" id="btn-example">📂 Examples</button>
       <button class="btn btn-run" id="btn-run">▶ Run</button>
@@ -47,7 +51,21 @@
 
     <!-- LEFT SIDEBAR -->
     <aside class="sidebar" id="sidebar">
+<<<<<<< HEAD
       <div class="sidebar-header"><span>🔣</span> Emoji Reference</div>
+=======
+      <div class="sidebar-header">
+        <div class="sidebar-title"><span>🔣</span> Emoji Reference</div>
+        <div class="sidebar-controls">
+          <button class="sidebar-control" id="emoji-flash" type="button" title="Flash reference open">Flash</button>
+          <button class="sidebar-control" id="emoji-minimize" type="button" title="Minimize reference">_</button>
+          <button class="sidebar-corner" data-corner="top-left" type="button" title="Dock top left">TL</button>
+          <button class="sidebar-corner" data-corner="top-right" type="button" title="Dock top right">TR</button>
+          <button class="sidebar-corner" data-corner="bottom-left" type="button" title="Dock bottom left">BL</button>
+          <button class="sidebar-corner" data-corner="bottom-right" type="button" title="Dock bottom right">BR</button>
+        </div>
+      </div>
+>>>>>>> f5da7e110be300249f54d955627ebfcc15bf175f
       <div class="sidebar-search">
         <input type="text" id="emoji-search" placeholder="Search emojis..." autocomplete="off" />
       </div>
@@ -91,6 +109,7 @@
         ></textarea>
       </div>
 
+<<<<<<< HEAD
       <!-- PROGRESS TRACKER — bottom of editor -->
       <div class="progress-tracker" id="progress-tracker">
         <span class="progress-label">Progress:</span>
@@ -101,6 +120,8 @@
         </div>
       </div>
 
+=======
+>>>>>>> f5da7e110be300249f54d955627ebfcc15bf175f
     </section>
 
     <!-- RIGHT: Output -->
@@ -116,6 +137,24 @@
           <div class="welcome-sub">Select a question above, write emoji code, hit <strong>Run</strong> to test, then <strong>Submit</strong> when ready</div>
         </div>
       </div>
+
+      <div class="round2-panel" id="round2-panel">
+        <div class="round2-head">
+          <span>🧠 Round 2 Autonomous Evaluation</span>
+        </div>
+        <div class="round2-grid">
+          <input id="round2-team" type="text" placeholder="Team name" />
+          <input id="round2-module" type="hidden" />
+        </div>
+        <div class="round2-flash-preview" id="round2-flash-preview" aria-live="polite"></div>
+        <textarea id="round2-decoded" rows="2" placeholder="Decoded guess (what problem is this?)"></textarea>
+        <div class="round2-actions">
+          <button id="round2-submit" type="button">Submit Patch</button>
+          <button id="round2-hint" type="button" class="round2-hint">Ask Hint (-10)</button>
+        </div>
+        <div class="round2-result" id="round2-result">Awaiting emoji flash...</div>
+      </div>
+
     </section>
 
   </main>
@@ -128,15 +167,37 @@
   <!-- TOAST -->
   <div class="toast-container" id="toast-container"></div>
 
+<<<<<<< HEAD
   <script src="js/config.js"></script>
   <script src="js/auth.js"></script>
+=======
+  <!-- TEAM ACCESS GATE -->
+  <div class="team-gate" id="team-gate" role="dialog" aria-modal="true" aria-labelledby="team-gate-title">
+    <div class="team-gate-card">
+      <h2 id="team-gate-title">Enter Team Name</h2>
+      <p>Set your team identity to access the participant environment.</p>
+      <form id="team-gate-form" class="team-gate-form">
+        <input id="team-gate-input" type="text" maxlength="40" placeholder="e.g. TensorFlow Titans" autocomplete="off" required />
+        <button id="team-gate-join" type="submit">Continue</button>
+      </form>
+      <div class="team-gate-error" id="team-gate-error" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+>>>>>>> f5da7e110be300249f54d955627ebfcc15bf175f
   <script src="js/emojiMap.js"></script>
   <script src="js/compiler.js"></script>
   <script src="js/runner.js"></script>
   <script src="js/editor.js"></script>
   <script src="js/sidebar.js"></script>
   <script src="js/ui.js"></script>
+<<<<<<< HEAD
   <script src="js/participant.js"></script>
+=======
+  <script src="js/flashSync.js"></script>
+  <script src="js/round2Submission.js"></script>
+>>>>>>> f5da7e110be300249f54d955627ebfcc15bf175f
   <script src="js/app.js"></script>
 </body>
 </html>
